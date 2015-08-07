@@ -48,22 +48,6 @@ public class Plotter {
 		// as.safeRotateTo(1000, 0, 0);
 		// as.safeRotateTo(1000, 500, 0);
 
-		// Circle
-		// int points = 64;
-		// int centerX = 500;
-		// int centerY = 500;
-		// int radius = 500;
-		// double slice = 2 * Math.PI / points;
-		// for (int i = 0; i <= points; i++) {
-		// double angle = slice * i;
-		// int newX = (int) (centerX + radius * Math.cos(angle));
-		// int newY = (int) (centerY + radius * Math.sin(angle));
-		// as.safeRotateTo(newX, newY, 0);
-		// }
-
-		// Circle
-		// as.safeRotateTo(500, 0, 0);
-
 		// // Losange
 		// as.safeRotateTo(500, 0, 0);
 		// as.safeRotateTo(1000, 500, 0);
@@ -75,7 +59,7 @@ public class Plotter {
 		 * EV3LargeRegulatedMotor motorX = new
 		 * EV3LargeRegulatedMotor(MotorPort.A); EV3LargeRegulatedMotor motorY =
 		 * new EV3LargeRegulatedMotor(MotorPort.B);
-		 * 
+		 *
 		 * motorX.synchronizeWith(new EV3LargeRegulatedMotor[] { motorY });
 		 * motorX.startSynchronization(); motorX.setSpeed(1);
 		 * motorY.setSpeed(20); motorX.rotate(20); motorY.rotate(400);
@@ -86,17 +70,17 @@ public class Plotter {
 		/*
 		 * ArmMotor armMotor = new ArmMotor( new Port[] { MotorPort.A,
 		 * MotorPort.B }, true, true);
-		 * 
+		 *
 		 * armMotor.setSpeed(200);
-		 * 
+		 *
 		 * armMotor.setMaximumPosition(360); armMotor.setMinimumPosition(-360);
-		 * 
+		 *
 		 * armMotor.forward(false); Delay.msDelay(500);
 		 * armMotor.backward(false);
-		 * 
+		 *
 		 * LCD.clear(); LCD.drawString("Final pos: " + armMotor.getPosition(),
 		 * 0, 0);
-		 * 
+		 *
 		 * Delay.msDelay(5000);
 		 */
 
