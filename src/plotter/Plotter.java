@@ -52,30 +52,12 @@ public class Plotter {
 		 * EV3LargeRegulatedMotor motorX = new
 		 * EV3LargeRegulatedMotor(MotorPort.A); EV3LargeRegulatedMotor motorY =
 		 * new EV3LargeRegulatedMotor(MotorPort.B);
-		 * 
+		 *
 		 * motorX.synchronizeWith(new EV3LargeRegulatedMotor[] { motorY });
 		 * motorX.startSynchronization(); motorX.setSpeed(1);
 		 * motorY.setSpeed(20); motorX.rotate(20); motorY.rotate(400);
 		 * motorX.endSynchronization(); motorX.waitComplete();
 		 * motorY.waitComplete();
 		 */
-
-		/*
-		 * ArmMotor armMotor = new ArmMotor( new Port[] { MotorPort.A,
-		 * MotorPort.B }, true, true);
-		 * 
-		 * armMotor.setSpeed(200);
-		 * 
-		 * armMotor.setMaximumPosition(360); armMotor.setMinimumPosition(-360);
-		 * 
-		 * armMotor.forward(false); Delay.msDelay(500);
-		 * armMotor.backward(false);
-		 * 
-		 * LCD.clear(); LCD.drawString("Final pos: " + armMotor.getPosition(),
-		 * 0, 0);
-		 * 
-		 * Delay.msDelay(5000);
-		 */
-
 	}
 }
