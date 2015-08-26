@@ -6,7 +6,6 @@ import lejos.hardware.motor.BaseRegulatedMotor;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.port.Port;
-import lejos.robotics.RegulatedMotor;
 
 public class ArmMotor {
 	// Lists of all the motors this ArmMotor is made of.
@@ -272,9 +271,12 @@ public class ArmMotor {
 		this.crossArmSynchronizedSlaveMotors.addAll(otherArm.getAllMotors());
 
 		// Sync all motors with master one.
-		this.allMotors.get(0).synchronizeWith(
-				(RegulatedMotor[]) this.crossArmSynchronizedSlaveMotors
-						.toArray());
+		this.allMotors
+				.get(0)
+				.synchronizeWith(
+						this.crossArmSynchronizedSlaveMotors
+								.toArray(new BaseRegulatedMotor[this.crossArmSynchronizedSlaveMotors
+										.size()]));
 	}
 
 	/**
@@ -298,7 +300,7 @@ public class ArmMotor {
 
 		// Disable synchronization.
 		this.armSyncIsOn = false;
-		this.crossArmSynchronizedSlaveMotors = new ArrayList<BaseRegulatedMotor>();
+		this.crossArmSynchronizedSlaveMotors.clear();
 	}
 
 	/*
@@ -313,7 +315,9 @@ public class ArmMotor {
 		// Act only when a global sync between Arms is not in progress.
 		if (!this.armSyncIsOn) {
 			this.allMotors.get(0).synchronizeWith(
-					(RegulatedMotor[]) this.slaveMotors.toArray());
+					this.slaveMotors
+							.toArray(new BaseRegulatedMotor[this.slaveMotors
+									.size()]));
 		}
 	}
 

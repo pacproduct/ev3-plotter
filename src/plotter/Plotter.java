@@ -1,9 +1,6 @@
 package plotter;
 
-import java.util.ArrayList;
-
 import lejos.hardware.lcd.LCD;
-import lejos.utility.Delay;
 
 public class Plotter {
 	// Global resolution to be applied to drawings/movements.
@@ -25,6 +22,8 @@ public class Plotter {
 		// Tests.
 		LCD.drawString("Running.", 0, 0);
 
+		as.armSyncTest();
+
 		// Square
 		// as.executeInstructions(geometry.getLineInstructions(new Vector3D(0,
 		// 0,
@@ -33,14 +32,14 @@ public class Plotter {
 		// Vector3D(1000,
 		// 0, 0), new Vector3D(1000, 1000, 0)));
 
-		ArrayList<MotorInstruction> instructions = geometry
-				.getHorizontalCircleInstructions(new Vector3D(1000, 2000, 0),
-						500, -90, 64);
-
-		LCD.clear();
-		LCD.drawString("Num instr.:" + instructions.size(), 0, 0);
-
-		Delay.msDelay(1000);
+		// ArrayList<MotorInstruction> instructions = geometry
+		// .getHorizontalCircleInstructions(new Vector3D(1000, 2000, 0),
+		// 500, -90, 8);
+		//
+		// LCD.clear();
+		// LCD.drawString("Num instr.:" + instructions.size(), 0, 0);
+		//
+		// Delay.msDelay(1000);
 
 		// as.executeInstructions(instructions);
 

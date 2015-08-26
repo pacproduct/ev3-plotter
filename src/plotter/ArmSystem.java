@@ -40,7 +40,7 @@ public class ArmSystem {
 	 */
 	public ArmSystem() {
 		this.armMotorX = new ArmMotor(new Port[] { MotorPort.A },
-				MOTOR_X_DIRECTION, true);
+				MOTOR_X_DIRECTION, false);
 		this.armMotorY = new ArmMotor(new Port[] { MotorPort.B, MotorPort.C },
 				MOTOR_Y_DIRECTION, true);
 
@@ -141,5 +141,14 @@ public class ArmSystem {
 
 			currentMotor.rotate(instruction.value, false);
 		}
+	}
+
+	public void armSyncTest() {
+		this.armMotorX.synchronizeWithArm(this.armMotorY);
+
+		this.armMotorX.rotate(180, true);
+		this.armMotorY.rotate(360, true);
+
+		this.armMotorX.stopSyncWithArmAndRunOperations(false);
 	}
 }
