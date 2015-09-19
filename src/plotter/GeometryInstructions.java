@@ -66,13 +66,13 @@ public class GeometryInstructions {
 			currentPos.z = Math.round(theoreticalZ);
 
 			// Compute needed moves to handle current step.
-			this.handleStep(instructions, previousPos, currentPos,
+			this.handleAliasedStep(instructions, previousPos, currentPos,
 					this.resolution);
 		}
 
 		// Execute one last time the step handling function with a resolution of
 		// 1, to apply any pending move to reach destination point.
-		this.handleStep(instructions, previousPos, currentPos, 1);
+		this.handleAliasedStep(instructions, previousPos, currentPos, 1);
 
 		// Return the generated set of instructions.
 		return instructions;
@@ -94,26 +94,24 @@ public class GeometryInstructions {
 	 *            1 will be treated as 1). This represents the minimum number of
 	 *            steps that each move should travel. For instance
 	 */
-	protected void handleStep(ArrayList<MotorInstruction> instructions,
+	protected void handleAliasedStep(ArrayList<MotorInstruction> instructions,
 			Vector3D previousPos, Vector3D currentPos, int resolution) {
 
 		// Compute what move should be done if resolution was 1.
 		Vector3D move = new Vector3D(currentPos.x - previousPos.x, currentPos.y
 				- previousPos.y, currentPos.z - previousPos.z);
 
-		MotorInstruction lastestInstruction = new MotorInstruction(
-				MotorInstruction.DO_NOTHING);
+		MotorInstruction lastestInstruction = new MotorInstruction();
 
 		// Handle X axis and by taking resolution into account.
 		if (Math.abs(move.x) >= resolution) {
 			if (instructions.size() > 0) {
 				lastestInstruction = instructions.get(instructions.size() - 1);
 			}
-			if (MotorInstruction.MOVE_X == lastestInstruction.action) {
-				lastestInstruction.value += move.x;
+			if (MotorInstruction.MOVE_X == lastestInstruction.getMoveType()) {
+				lastestInstruction.moveX += move.x;
 			} else {
-				instructions.add(new MotorInstruction(MotorInstruction.MOVE_X,
-						move.x));
+				instructions.add(new MotorInstruction(move.x, 0, 0));
 			}
 
 			previousPos.x = currentPos.x;
@@ -124,11 +122,10 @@ public class GeometryInstructions {
 			if (instructions.size() > 0) {
 				lastestInstruction = instructions.get(instructions.size() - 1);
 			}
-			if (MotorInstruction.MOVE_Y == lastestInstruction.action) {
-				lastestInstruction.value += move.y;
+			if (MotorInstruction.MOVE_Y == lastestInstruction.getMoveType()) {
+				lastestInstruction.moveY += move.y;
 			} else {
-				instructions.add(new MotorInstruction(MotorInstruction.MOVE_Y,
-						move.y));
+				instructions.add(new MotorInstruction(0, move.y, 0));
 			}
 
 			previousPos.y = currentPos.y;
@@ -139,11 +136,10 @@ public class GeometryInstructions {
 			if (instructions.size() > 0) {
 				lastestInstruction = instructions.get(instructions.size() - 1);
 			}
-			if (MotorInstruction.MOVE_Z == lastestInstruction.action) {
-				lastestInstruction.value += move.z;
+			if (MotorInstruction.MOVE_Z == lastestInstruction.getMoveType()) {
+				lastestInstruction.moveZ += move.z;
 			} else {
-				instructions.add(new MotorInstruction(MotorInstruction.MOVE_Z,
-						move.z));
+				instructions.add(new MotorInstruction(0, 0, move.z));
 			}
 
 			previousPos.y = currentPos.y;

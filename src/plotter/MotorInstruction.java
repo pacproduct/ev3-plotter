@@ -1,21 +1,58 @@
 package plotter;
 
 public class MotorInstruction {
-	final static int DO_NOTHING = 0;
-
+	// Move types.
+	final static int MOVE_NONE = 0;
 	final static int MOVE_X = 1;
 	final static int MOVE_Y = 2;
 	final static int MOVE_Z = 3;
+	final static int MOVE_MIXED = 4;
 
-	public int action = DO_NOTHING;
-	public int value = 0;
+	public int moveX = 0;
+	public int moveY = 0;
+	public int moveZ = 0;
 
-	public MotorInstruction(int action) {
-		this.action = action;
+	public float speedRatioX = 1;
+	public float speedRatioY = 1;
+	public float speedRatioZ = 1;
+
+	public MotorInstruction(int moveX, int moveY, int moveZ) {
+		this.moveX = moveX;
+		this.moveY = moveY;
+		this.moveZ = moveZ;
 	}
 
-	public MotorInstruction(int action, int value) {
-		this.action = action;
-		this.value = value;
+	public MotorInstruction(int moveX, int moveY, int moveZ, float speedRatioX,
+			float speedRatioY, float speedRatioZ) {
+		this.moveX = moveX;
+		this.moveY = moveY;
+		this.moveZ = moveZ;
+
+		this.speedRatioX = speedRatioX;
+		this.speedRatioY = speedRatioY;
+		this.speedRatioZ = speedRatioZ;
+	}
+
+	public MotorInstruction() {
+	}
+
+	public int getMoveType() {
+		if (moveX != 0 && moveY == 0 && moveZ == 0) {
+			return MOVE_X;
+		}
+
+		if (moveX == 0 && moveY != 0 && moveZ == 0) {
+			return MOVE_Y;
+		}
+
+		if (moveX == 0 && moveY == 0 && moveZ != 0) {
+			return MOVE_Z;
+		}
+
+		if (moveX == 0 && moveY == 0 && moveZ == 0) {
+			return MOVE_NONE;
+		}
+
+		return MOVE_MIXED;
 	}
 }

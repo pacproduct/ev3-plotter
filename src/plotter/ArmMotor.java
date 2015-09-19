@@ -259,16 +259,19 @@ public class ArmMotor {
 	/**
 	 * Starts a synchronized operation with another ArmMotor.
 	 *
-	 * @param otherArm
+	 * @param otherArms
 	 *            The other ArmMotor this ArmMotor should synchronize with.
 	 */
-	public void synchronizeWithArm(ArmMotor otherArm) {
+	public void synchronizeWithArm(ArmMotor[] otherArms) {
 		// Remember we're currently in the middle of a cross-Arm sync.
 		this.armSyncIsOn = true;
 
 		// Compute the list of all the slave motors to synchronize with.
 		this.crossArmSynchronizedSlaveMotors = this.slaveMotors;
-		this.crossArmSynchronizedSlaveMotors.addAll(otherArm.getAllMotors());
+		for (int i = 0; i < otherArms.length; i++) {
+			this.crossArmSynchronizedSlaveMotors.addAll(otherArms[i]
+					.getAllMotors());
+		}
 
 		// Sync all motors with master one.
 		this.allMotors
