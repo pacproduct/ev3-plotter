@@ -41,11 +41,11 @@ public class ArmSystem {
 	 * Constructor.
 	 */
 	public ArmSystem() {
-		this.armMotorX = new ArmMotor(new Port[] { MotorPort.A },
+		this.armMotorX = new ArmMotor(new Port[] { MotorPort.A, MotorPort.B },
 				MOTOR_X_DIRECTION, true);
-		this.armMotorY = new ArmMotor(new Port[] { MotorPort.B },
-				MOTOR_Y_DIRECTION, true);
-		this.armMotorZ = new ArmMotor(new Port[] { MotorPort.C },
+		this.armMotorY = new ArmMotor(new Port[] { MotorPort.C },
+				MOTOR_Y_DIRECTION, false);
+		this.armMotorZ = new ArmMotor(new Port[] { MotorPort.D },
 				MOTOR_Y_DIRECTION, false);
 
 		this.armMotorX.setSpeed(NORMAL_OPERATION_SPEED);
@@ -128,24 +128,60 @@ public class ArmSystem {
 	 */
 
 	public void executeInstructions(ArrayList<MotorInstruction> instructions) {
-
 		for (MotorInstruction instruction : instructions) {
-			armMotorX.synchronizeWithArm(new ArmMotor[] { this.armMotorY,
+			armMotorX.synchronizeWithArms(new ArmMotor[] { this.armMotorY,
 					this.armMotorZ });
 
-			this.armMotorX.rotate(instruction.moveX, false);
-			this.armMotorY.rotate(instruction.moveY, false);
-			this.armMotorZ.rotate(instruction.moveZ, false);
+			this.armMotorX.rotate(instruction.moveX, true);
+			this.armMotorY.rotate(instruction.moveY, true);
+			this.armMotorZ.rotate(instruction.moveZ, true);
 
-			this.armMotorX.stopSyncWithArmAndRunOperations(false);
+			this.armMotorX.stopSyncWithArmsAndRunOperations(false);
 		}
 	}
 
 	public void armSyncTest() {
-		MotorInstruction inst = new MotorInstruction(360, 360, 360);
+		MotorInstruction inst = new MotorInstruction(180, 180, 180);
 		ArrayList<MotorInstruction> instList = new ArrayList<MotorInstruction>();
 		instList.add(inst);
 
 		this.executeInstructions(instList);
+
+		// EV3LargeRegulatedMotor motorX = (EV3LargeRegulatedMotor)
+		// this.armMotorX
+		// .getAllMotors().get(0);
+		// EV3LargeRegulatedMotor motorY = (EV3LargeRegulatedMotor)
+		// this.armMotorX
+		// .getAllMotors().get(1);
+		//
+		// this.syncTest(motorX, motorY);
+		//
+		// motorX.setSpeed(50);
+		// motorY.setSpeed(50);
+		// motorX.rotateTo(180, true);
+		// motorY.rotateTo(180, false);
+		//
+		// this.stopSyncTest(motorX, motorY);
+
+		// EV3LargeRegulatedMotor motorX = (EV3LargeRegulatedMotor)
+		// this.armMotorX
+		// .getAllMotors().get(0);
+		// EV3LargeRegulatedMotor motorY = (EV3LargeRegulatedMotor)
+		// this.armMotorX
+		// .getAllMotors().get(1);
+		//
+		// motorX.setSpeed(50);
+		// motorY.setSpeed(50);
+		// motorX.forward();
+		// motorY.forward();
+		//
+		// this.syncTest(motorX, motorY);
+		//
+		// motorX.setSpeed(100);
+		// motorY.setSpeed(100);
+		//
+		// this.stopSyncTest(motorX, motorY);
+
+		// this.armMotorX.rotate(180, false);
 	}
 }

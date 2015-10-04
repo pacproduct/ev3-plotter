@@ -47,16 +47,20 @@ public class Plotter {
 		// as.safeRotateTo(1000, 0, 0);
 		// as.safeRotateTo(1000, 500, 0);
 
-		/*
-		 * EV3LargeRegulatedMotor motorX = new
-		 * EV3LargeRegulatedMotor(MotorPort.A); EV3LargeRegulatedMotor motorY =
-		 * new EV3LargeRegulatedMotor(MotorPort.B);
-		 *
-		 * motorX.synchronizeWith(new EV3LargeRegulatedMotor[] { motorY });
-		 * motorX.startSynchronization(); motorX.setSpeed(1);
-		 * motorY.setSpeed(20); motorX.rotate(20); motorY.rotate(400);
-		 * motorX.endSynchronization(); motorX.waitComplete();
-		 * motorY.waitComplete();
-		 */
+		// EV3LargeRegulatedMotor motorX = new
+		// EV3LargeRegulatedMotor(MotorPort.A);
+		// EV3LargeRegulatedMotor motorY = new
+		// EV3LargeRegulatedMotor(MotorPort.B);
+		//
+		// motorX.synchronizeWith(new BaseRegulatedMotor[] { motorY });
+		// motorX.startSynchronization();
+		// motorX.setSpeed(50);
+		// motorY.setSpeed(50);
+		// motorX.rotateTo(180, true);
+		// motorY.rotateTo(180, false);
+		// motorX.endSynchronization();
+		// motorX.waitComplete();
+		// motorY.waitComplete();
+
 	}
 }

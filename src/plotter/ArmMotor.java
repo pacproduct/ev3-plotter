@@ -24,10 +24,12 @@ public class ArmMotor {
 	private int minimumPosition = 0;
 
 	// -- Arm synchronization variables --
-	// This turns to true when an Arm sync has been started.
-	private boolean armSyncIsOn = false;
+	// This turns to true when an Arm sync has been started. Is public so other
+	// arms can change it.
+	public boolean armSyncIsOn = false;
 	// Complete list of synchronized slave motors when syncing 2 arms.
-	private ArrayList<BaseRegulatedMotor> crossArmSynchronizedSlaveMotors = new ArrayList<BaseRegulatedMotor>();
+	private ArrayList<BaseRegulatedMotor> synchronizedArmsSlaveMotors = new ArrayList<BaseRegulatedMotor>();
+	private ArmMotor[] synchronizedArms = null;
 
 	/**
 	 * Constructor.
@@ -223,11 +225,9 @@ public class ArmMotor {
 	 *            Speed, in number of degrees per seconds.
 	 */
 	public void setSpeed(int speed) {
-		this.synchronizeAllMotors();
 		for (int i = 0; i < allMotors.size(); i++) {
 			this.allMotors.get(i).setSpeed(speed);
 		}
-		this.stopSyncAndRunOperations(true);
 	}
 
 	/**
@@ -262,14 +262,17 @@ public class ArmMotor {
 	 * @param otherArms
 	 *            The other ArmMotor this ArmMotor should synchronize with.
 	 */
-	public void synchronizeWithArm(ArmMotor[] otherArms) {
+	public void synchronizeWithArms(ArmMotor[] otherArms) {
 		// Remember we're currently in the middle of a cross-Arm sync.
 		this.armSyncIsOn = true;
+		this.synchronizedArms = otherArms;
 
 		// Compute the list of all the slave motors to synchronize with.
-		this.crossArmSynchronizedSlaveMotors = this.slaveMotors;
-		for (int i = 0; i < otherArms.length; i++) {
-			this.crossArmSynchronizedSlaveMotors.addAll(otherArms[i]
+		this.synchronizedArmsSlaveMotors.clear();
+		this.synchronizedArmsSlaveMotors.addAll(this.slaveMotors);
+		for (int i = 0; i < this.synchronizedArms.length; i++) {
+			this.synchronizedArms[i].armSyncIsOn = true;
+			this.synchronizedArmsSlaveMotors.addAll(this.synchronizedArms[i]
 					.getAllMotors());
 		}
 
@@ -277,9 +280,12 @@ public class ArmMotor {
 		this.allMotors
 				.get(0)
 				.synchronizeWith(
-						this.crossArmSynchronizedSlaveMotors
-								.toArray(new BaseRegulatedMotor[this.crossArmSynchronizedSlaveMotors
+						this.synchronizedArmsSlaveMotors
+								.toArray(new BaseRegulatedMotor[this.synchronizedArmsSlaveMotors
 										.size()]));
+
+		// Start sync.
+		this.allMotors.get(0).startSynchronization();
 	}
 
 	/**
@@ -290,20 +296,24 @@ public class ArmMotor {
 	 *            If true, method returns immediately. If false, waits for the
 	 *            operation to complete.
 	 */
-	public void stopSyncWithArmAndRunOperations(boolean immediateReturn) {
+	public void stopSyncWithArmsAndRunOperations(boolean immediateReturn) {
 		// Run operations.
 		this.allMotors.get(0).endSynchronization();
 
 		// Wait for operations to complete, if needed.
 		if (!immediateReturn) {
-			for (int i = 0; i < this.crossArmSynchronizedSlaveMotors.size(); i++) {
-				this.crossArmSynchronizedSlaveMotors.get(i).waitComplete();
+			for (int i = 0; i < this.synchronizedArmsSlaveMotors.size(); i++) {
+				this.synchronizedArmsSlaveMotors.get(i).waitComplete();
 			}
 		}
 
 		// Disable synchronization.
+		for (int i = 0; i < this.synchronizedArms.length; i++) {
+			this.synchronizedArms[i].armSyncIsOn = false;
+		}
 		this.armSyncIsOn = false;
-		this.crossArmSynchronizedSlaveMotors.clear();
+		this.synchronizedArmsSlaveMotors.clear();
+		this.synchronizedArms = null;
 	}
 
 	/*
@@ -317,10 +327,13 @@ public class ArmMotor {
 	protected void synchronizeAllMotors() {
 		// Act only when a global sync between Arms is not in progress.
 		if (!this.armSyncIsOn) {
-			this.allMotors.get(0).synchronizeWith(
-					this.slaveMotors
-							.toArray(new BaseRegulatedMotor[this.slaveMotors
-									.size()]));
+			BaseRegulatedMotor[] motorsToSyncWith = new BaseRegulatedMotor[this.slaveMotors
+					.size()];
+			this.slaveMotors.toArray(motorsToSyncWith);
+
+			BaseRegulatedMotor masterMotor = this.allMotors.get(0);
+			masterMotor.synchronizeWith(motorsToSyncWith);
+			masterMotor.startSynchronization();
 		}
 	}
 
