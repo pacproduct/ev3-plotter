@@ -2,19 +2,21 @@ package plotter;
 
 import java.util.ArrayList;
 
+import lejos.hardware.lcd.LCD;
 import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.Port;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.robotics.SampleProvider;
+import lejos.utility.Delay;
 
 public class ArmSystem {
 	// Constants.
 	// Boolean set to TRUE if motors should rotate in the normal direction, or
 	// FALSE if they should behave conversely.
 	public static final boolean MOTOR_X_DIRECTION = false;
-	public static final boolean MOTOR_Y_DIRECTION = false;
-	public static final boolean MOTOR_Z_DIRECTION = false;
+	public static final boolean MOTOR_Y_DIRECTION = true;
+	public static final boolean MOTOR_Z_DIRECTION = true;
 	// Motor speed when calibrating.
 	public static final int CALIBRATION_SPEED = 400;
 	// Motor speed when operating.
@@ -24,10 +26,17 @@ public class ArmSystem {
 	public static final int ANGLE_X_TO_POS_ZERO = 50;
 	public static final int ANGLE_Y_TO_POS_ZERO = 50;
 	public static final int ANGLE_Z_TO_POS_ZERO = 50;
-	// Maximums.
+	// Minimums/Maximums.
+	public static final int MIN_POS_X = -2000;
+	public static final int MIN_POS_Y = -2000;
+	public static final int MIN_POS_Z = -2000;
 	public static final int MAX_POS_X = 2000;
 	public static final int MAX_POS_Y = 2000;
 	public static final int MAX_POS_Z = 2000;
+	// Mechanical plays.
+	public static final int MECH_PLAY_X = 2;
+	public static final int MECH_PLAY_Y = 2;
+	public static final int MECH_PLAY_Z = 0;
 
 	// Robotic parts and properties.
 	private ArmMotor armMotorX;
@@ -42,24 +51,24 @@ public class ArmSystem {
 	 */
 	public ArmSystem() {
 		this.armMotorX = new ArmMotor(new Port[] { MotorPort.A, MotorPort.B },
-				MOTOR_X_DIRECTION, true);
+				MOTOR_X_DIRECTION, true, MECH_PLAY_X);
 		this.armMotorY = new ArmMotor(new Port[] { MotorPort.C },
-				MOTOR_Y_DIRECTION, false);
+				MOTOR_Y_DIRECTION, false, MECH_PLAY_Y);
 		this.armMotorZ = new ArmMotor(new Port[] { MotorPort.D },
-				MOTOR_Y_DIRECTION, false);
+				MOTOR_Y_DIRECTION, false, MECH_PLAY_Z);
 
 		this.armMotorX.setSpeed(NORMAL_OPERATION_SPEED);
 		this.armMotorY.setSpeed(NORMAL_OPERATION_SPEED);
 		this.armMotorZ.setSpeed(NORMAL_OPERATION_SPEED);
 
 		// Set min/max positions.
-		this.armMotorX.setMinimumPosition(0);
+		this.armMotorX.setMinimumPosition(MIN_POS_X);
 		this.armMotorX.setMaximumPosition(MAX_POS_X);
 
-		this.armMotorY.setMinimumPosition(0);
+		this.armMotorY.setMinimumPosition(MIN_POS_Y);
 		this.armMotorY.setMaximumPosition(MAX_POS_Y);
 
-		this.armMotorZ.setMinimumPosition(0);
+		this.armMotorZ.setMinimumPosition(MIN_POS_Z);
 		this.armMotorZ.setMaximumPosition(MAX_POS_Z);
 
 		this.sensorX = new EV3TouchSensor(SensorPort.S1);
@@ -141,11 +150,54 @@ public class ArmSystem {
 	}
 
 	public void armSyncTest() {
-		MotorInstruction inst = new MotorInstruction(180, 180, 180);
 		ArrayList<MotorInstruction> instList = new ArrayList<MotorInstruction>();
-		instList.add(inst);
+		MotorInstruction inst = null;
 
+		LCD.clear();
+		LCD.drawString("ARM POS => " + this.armMotorX.getPosition(), 0, 0);
+		LCD.drawString("REAL POS => "
+				+ this.armMotorX.getAllMotors().get(0).getPosition(), 0, 1);
+		Delay.msDelay(1000);
+
+		inst = new MotorInstruction(180, 0, 0);
+		instList.clear();
+		instList.add(inst);
 		this.executeInstructions(instList);
+		LCD.clear();
+		LCD.drawString("ARM POS => " + this.armMotorX.getPosition(), 0, 0);
+		LCD.drawString("REAL POS => "
+				+ this.armMotorX.getAllMotors().get(0).getPosition(), 0, 1);
+		Delay.msDelay(2000);
+
+		inst = new MotorInstruction(-180, 0, 0);
+		instList.clear();
+		instList.add(inst);
+		this.executeInstructions(instList);
+		LCD.clear();
+		LCD.drawString("ARM POS => " + this.armMotorX.getPosition(), 0, 0);
+		LCD.drawString("REAL POS => "
+				+ this.armMotorX.getAllMotors().get(0).getPosition(), 0, 1);
+		Delay.msDelay(2000);
+
+		inst = new MotorInstruction(-180, 0, 0);
+		instList.clear();
+		instList.add(inst);
+		this.executeInstructions(instList);
+		LCD.clear();
+		LCD.drawString("ARM POS => " + this.armMotorX.getPosition(), 0, 0);
+		LCD.drawString("REAL POS => "
+				+ this.armMotorX.getAllMotors().get(0).getPosition(), 0, 1);
+		Delay.msDelay(2000);
+
+		inst = new MotorInstruction(180, 0, 0);
+		instList.clear();
+		instList.add(inst);
+		this.executeInstructions(instList);
+		LCD.clear();
+		LCD.drawString("ARM POS => " + this.armMotorX.getPosition(), 0, 0);
+		LCD.drawString("REAL POS => "
+				+ this.armMotorX.getAllMotors().get(0).getPosition(), 0, 1);
+		Delay.msDelay(2000);
 
 		// EV3LargeRegulatedMotor motorX = (EV3LargeRegulatedMotor)
 		// this.armMotorX

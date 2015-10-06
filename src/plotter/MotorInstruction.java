@@ -16,6 +16,9 @@ public class MotorInstruction {
 	public float speedRatioY = 1;
 	public float speedRatioZ = 1;
 
+	public MotorInstruction() {
+	}
+
 	public MotorInstruction(int moveX, int moveY, int moveZ) {
 		this.moveX = moveX;
 		this.moveY = moveY;
@@ -31,9 +34,6 @@ public class MotorInstruction {
 		this.speedRatioX = speedRatioX;
 		this.speedRatioY = speedRatioY;
 		this.speedRatioZ = speedRatioZ;
-	}
-
-	public MotorInstruction() {
 	}
 
 	public int getMoveType() {

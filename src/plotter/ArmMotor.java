@@ -13,7 +13,12 @@ public class ArmMotor {
 	// List of all motors, minus the master one.
 	private ArrayList<BaseRegulatedMotor> slaveMotors = new ArrayList<BaseRegulatedMotor>();
 
+	// Direction and motor play.
 	private int directionOperator = 1;
+	private int motorPlay = 0;
+	// Following boolean is true when the last move was backward, meaning that
+	// the motor play is being used.
+	private boolean isPlayActive = false;
 
 	// -- Max and min position variables --
 	// Boolean indicating whether max and min positions are active or not.
@@ -44,8 +49,14 @@ public class ArmMotor {
 	 * @param useBigMotors
 	 *            Indicates whether this Arm uses EV3LargeRegulatedMotor motors,
 	 *            or medium ones. Set to true if it is using large ones.
+	 * @param motorPlay
+	 *            Mechanical play that should be taken into account when moving
+	 *            the motor. Should be positive. Will force the motor to rotate
+	 *            a bit more when going backward. Set it to zero if you do not
+	 *            need to counter any mechanical play effect.
 	 */
-	public ArmMotor(Port[] ports, boolean forward, boolean useBigMotors) {
+	public ArmMotor(Port[] ports, boolean forward, boolean useBigMotors,
+			int motorPlay) {
 		if (forward) {
 			this.directionOperator = 1;
 		} else {
@@ -66,6 +77,9 @@ public class ArmMotor {
 		for (int i = 1; i < ports.length; i++) {
 			this.slaveMotors.add(this.allMotors.get(i));
 		}
+
+		// Set motor play.
+		this.motorPlay = motorPlay;
 	}
 
 	/**
@@ -114,8 +128,16 @@ public class ArmMotor {
 	 */
 	public int getPosition() {
 		// Consider motor number 0 as the master.
-		return (int) this.allMotors.get(0).getPosition()
+		int currentPosition = (int) this.allMotors.get(0).getPosition()
 				* this.directionOperator;
+
+		// If the mechanical play is being applied, remove it.
+		if (this.isPlayActive) {
+			currentPosition += this.motorPlay;
+		}
+
+		// If the motor play is being applied
+		return currentPosition;
 	}
 
 	/*
@@ -140,13 +162,21 @@ public class ArmMotor {
 			angle = this.minimumPosition;
 		}
 
+		// Take the motor play into account, when going backward.
+		if (angle < this.getPosition()) {
+			this.isPlayActive = true;
+			angle -= this.motorPlay;
+		} else {
+			this.isPlayActive = false;
+		}
+
 		// Prepare value to rotate to.
-		int destValue = angle * this.directionOperator;
+		angle = angle * this.directionOperator;
 
 		// Apply action, in a synchronized fashion.
 		this.synchronizeAllMotors();
 		for (int i = 0; i < allMotors.size(); i++) {
-			this.allMotors.get(i).rotateTo(destValue, true);
+			this.allMotors.get(i).rotateTo(angle, true);
 		}
 		this.stopSyncAndRunOperations(immediateReturn);
 	}
