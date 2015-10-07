@@ -5,15 +5,17 @@ import java.util.ArrayList;
 public class GeometryInstructions {
 	// Default resolution is the finest.
 	private int resolution = 1;
+	// Default mode is the non-aliased mode.
+	private boolean aliasedMode = false;
 
 	/**
-	 * Default constructor. Does nothing special.
+	 * Default constructor. Initializes the class in non-aliased mode.
 	 */
 	public GeometryInstructions() {
 	}
 
 	/**
-	 * Constructor with resolution parameter.
+	 * Constructor with resolution parameter. Implies the aliased mode.
 	 *
 	 * @param resolution
 	 *            Defines how fine the drawing should be. Minimum value: 1
@@ -21,6 +23,18 @@ public class GeometryInstructions {
 	 */
 	public GeometryInstructions(int resolution) {
 		this.resolution = resolution;
+		this.aliasedMode = true;
+	}
+
+	/**
+	 * Constructor with resolution parameter. Implies the aliased mode.
+	 *
+	 * @param resolution
+	 *            Defines how fine the drawing should be. Minimum value: 1
+	 *            (finest).
+	 */
+	public GeometryInstructions(boolean aliasedMode) {
+		this.aliasedMode = aliasedMode;
 	}
 
 	/**
@@ -34,6 +48,15 @@ public class GeometryInstructions {
 	 */
 	public ArrayList<MotorInstruction> getLineInstructions(Vector3D start,
 			Vector3D end) {
+		if (this.aliasedMode) {
+			return this.getAliasedLineInstructions(start, end);
+		} else {
+			return this.getDirectLineInstructions(start, end);
+		}
+	}
+
+	protected ArrayList<MotorInstruction> getAliasedLineInstructions(
+			Vector3D start, Vector3D end) {
 		// Array of instructions that will be returned.
 		ArrayList<MotorInstruction> instructions = new ArrayList<MotorInstruction>();
 
@@ -75,6 +98,40 @@ public class GeometryInstructions {
 		this.handleAliasedStep(instructions, previousPos, currentPos, 1);
 
 		// Return the generated set of instructions.
+		return instructions;
+	}
+
+	protected ArrayList<MotorInstruction> getDirectLineInstructions(
+			Vector3D start, Vector3D end) {
+		// Array of instructions that will be returned.
+		ArrayList<MotorInstruction> instructions = new ArrayList<MotorInstruction>();
+
+		// Compute the corresponding relative move.
+		Vector3D distance = new Vector3D(end.x - start.x, end.y - start.y,
+				end.z - start.z);
+
+		// Find out what the biggest distance is: That will be used as the
+		// reference for speed ratios.
+		int maxDistance = Math.max(Math.abs(distance.x), Math.abs(distance.y));
+		maxDistance = Math.max(maxDistance, Math.abs(distance.z));
+
+		// If max distance turn out to be zero, it means there's no movement
+		// need. Return an empty set of instructions.
+		if (maxDistance == 0) {
+			return instructions;
+		}
+
+		// Prepare speed ratios.
+		float speedRatioX = distance.x / maxDistance;
+		float speedRatioY = distance.y / maxDistance;
+		float speedRatioZ = distance.z / maxDistance;
+
+		MotorInstruction instruction = new MotorInstruction(distance.x,
+				distance.y, distance.z, speedRatioX, speedRatioY, speedRatioZ);
+
+		// Add the only needed instruction.
+		instructions.add(instruction);
+
 		return instructions;
 	}
 

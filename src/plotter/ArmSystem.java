@@ -125,22 +125,20 @@ public class ArmSystem {
 		armMotor.resetTachoCount();
 	}
 
-	/*
-	 * public void safeRotateTo(int x, int y, int z) { // Convert line to set of
-	 * Motor instructions. ArrayList<MotorInstruction> instructions = new
-	 * ArrayList<MotorInstruction>(); // TODO: Replace "0" by MotorZ when it's
-	 * available. instructions = geometry.getLineInstructions( new
-	 * Vector3D(this.armMotorX.getPosition(), this.armMotorY .getPosition(), 0),
-	 * new Vector3D(x, y, z));
-	 * 
-	 * }
-	 */
-
 	public void executeInstructions(ArrayList<MotorInstruction> instructions) {
 		for (MotorInstruction instruction : instructions) {
 			armMotorX.synchronizeWithArms(new ArmMotor[] { this.armMotorY,
 					this.armMotorZ });
 
+			// Apply speed ratios.
+			this.armMotorX.setSpeed(Math.round(NORMAL_OPERATION_SPEED
+					* instruction.speedRatioX));
+			this.armMotorY.setSpeed(Math.round(NORMAL_OPERATION_SPEED
+					* instruction.speedRatioY));
+			this.armMotorZ.setSpeed(Math.round(NORMAL_OPERATION_SPEED
+					* instruction.speedRatioZ));
+
+			// Apply move instructions.
 			this.armMotorX.rotate(instruction.moveX, true);
 			this.armMotorY.rotate(instruction.moveY, true);
 			this.armMotorZ.rotate(instruction.moveZ, true);
