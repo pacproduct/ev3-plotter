@@ -46,8 +46,8 @@ public class GeometryInstructions {
 	 *            Destination point of the line to draw.
 	 * @return List of instructions to draw the line.
 	 */
-	public ArrayList<MotorInstruction> getLineInstructions(Vector3D start,
-			Vector3D end) {
+	public ArrayList<MotorInstruction> getLineInstructions(IntVector3D start,
+			IntVector3D end) {
 		if (this.aliasedMode) {
 			return this.getAliasedLineInstructions(start, end);
 		} else {
@@ -56,13 +56,13 @@ public class GeometryInstructions {
 	}
 
 	protected ArrayList<MotorInstruction> getAliasedLineInstructions(
-			Vector3D start, Vector3D end) {
+			IntVector3D start, IntVector3D end) {
 		// Array of instructions that will be returned.
 		ArrayList<MotorInstruction> instructions = new ArrayList<MotorInstruction>();
 
 		// Compute signed distances.
-		Vector3D distance = new Vector3D(end.x - start.x, end.y - start.y,
-				end.z - start.z);
+		IntVector3D distance = new IntVector3D(end.x - start.x,
+				end.y - start.y, end.z - start.z);
 
 		// Find out what the biggest distance is: That will be used as the
 		// number of steps to go through.
@@ -70,8 +70,8 @@ public class GeometryInstructions {
 		numberSteps = Math.max(numberSteps, Math.abs(distance.z));
 
 		// Declare all variables that will be used within the process loop.
-		Vector3D previousPos = new Vector3D(start.x, start.y, start.z);
-		Vector3D currentPos = new Vector3D(start.x, start.y, start.z);
+		IntVector3D previousPos = new IntVector3D(start.x, start.y, start.z);
+		IntVector3D currentPos = new IntVector3D(start.x, start.y, start.z);
 
 		float theoreticalX = 0;
 		float theoreticalY = 0;
@@ -102,13 +102,13 @@ public class GeometryInstructions {
 	}
 
 	protected ArrayList<MotorInstruction> getDirectLineInstructions(
-			Vector3D start, Vector3D end) {
+			IntVector3D start, IntVector3D end) {
 		// Array of instructions that will be returned.
 		ArrayList<MotorInstruction> instructions = new ArrayList<MotorInstruction>();
 
 		// Compute the corresponding relative move.
-		Vector3D distance = new Vector3D(end.x - start.x, end.y - start.y,
-				end.z - start.z);
+		IntVector3D distance = new IntVector3D(end.x - start.x,
+				end.y - start.y, end.z - start.z);
 
 		// Find out what the biggest distance is: That will be used as the
 		// reference for speed ratios.
@@ -152,11 +152,11 @@ public class GeometryInstructions {
 	 *            steps that each move should travel. For instance
 	 */
 	protected void handleAliasedStep(ArrayList<MotorInstruction> instructions,
-			Vector3D previousPos, Vector3D currentPos, int resolution) {
+			IntVector3D previousPos, IntVector3D currentPos, int resolution) {
 
 		// Compute what move should be done if resolution was 1.
-		Vector3D move = new Vector3D(currentPos.x - previousPos.x, currentPos.y
-				- previousPos.y, currentPos.z - previousPos.z);
+		IntVector3D move = new IntVector3D(currentPos.x - previousPos.x,
+				currentPos.y - previousPos.y, currentPos.z - previousPos.z);
 
 		MotorInstruction lastestInstruction = new MotorInstruction();
 
@@ -217,7 +217,8 @@ public class GeometryInstructions {
 	 * @return List of instructions to draw the horizontal circle.
 	 */
 	public ArrayList<MotorInstruction> getHorizontalCircleInstructions(
-			Vector3D circleCenter, int radius, double startAngle, int numPoints) {
+			IntVector3D circleCenter, int radius, double startAngle,
+			int numPoints) {
 		// Array of instructions that will be returned.
 		ArrayList<MotorInstruction> instructions = new ArrayList<MotorInstruction>();
 
@@ -240,8 +241,8 @@ public class GeometryInstructions {
 			int currentY = Math.round((float) (circleCenter.y + radius
 					* Math.sin(angle)));
 
-			instructions.addAll(this.getLineInstructions(new Vector3D(
-					previousX, previousY, circleCenter.z), new Vector3D(
+			instructions.addAll(this.getLineInstructions(new IntVector3D(
+					previousX, previousY, circleCenter.z), new IntVector3D(
 					currentX, currentY, circleCenter.z)));
 
 			previousX = currentX;
