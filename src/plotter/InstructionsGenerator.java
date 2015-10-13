@@ -2,7 +2,7 @@ package plotter;
 
 import java.util.ArrayList;
 
-public class GeometryInstructions {
+public class InstructionsGenerator {
 	// Default resolution is the finest.
 	private int resolution = 1;
 	// Default mode is the non-aliased mode.
@@ -11,7 +11,7 @@ public class GeometryInstructions {
 	/**
 	 * Default constructor. Initializes the class in non-aliased mode.
 	 */
-	public GeometryInstructions() {
+	public InstructionsGenerator() {
 	}
 
 	/**
@@ -21,7 +21,7 @@ public class GeometryInstructions {
 	 *            Defines how fine the drawing should be. Minimum value: 1
 	 *            (finest).
 	 */
-	public GeometryInstructions(int resolution) {
+	public InstructionsGenerator(int resolution) {
 		this.resolution = resolution;
 		this.aliasedMode = true;
 	}
@@ -33,7 +33,7 @@ public class GeometryInstructions {
 	 *            Defines how fine the drawing should be. Minimum value: 1
 	 *            (finest).
 	 */
-	public GeometryInstructions(boolean aliasedMode) {
+	public InstructionsGenerator(boolean aliasedMode) {
 		this.aliasedMode = aliasedMode;
 	}
 
@@ -201,54 +201,5 @@ public class GeometryInstructions {
 
 			previousPos.y = currentPos.y;
 		}
-	}
-
-	/**
-	 * Get a list of Motor instructions to draw a circle on the horizontal plan.
-	 *
-	 * @param circleCenter
-	 *            Center coordinates of the circle to draw.
-	 * @param radius
-	 *            Radius of the circle to draw.
-	 * @param startAngle
-	 *            Starting angle, in degrees. Draws the circle anti-clockwise.
-	 *            If set to 0, will start from the right side. If set to 90,
-	 *            will start from the bottom. And so on.
-	 * @return List of instructions to draw the horizontal circle.
-	 */
-	public ArrayList<MotorInstruction> getHorizontalCircleInstructions(
-			IntVector3D circleCenter, int radius, double startAngle,
-			int numPoints) {
-		// Array of instructions that will be returned.
-		ArrayList<MotorInstruction> instructions = new ArrayList<MotorInstruction>();
-
-		// Convert start angle to radians.
-		startAngle = (startAngle * Math.PI) / 180;
-
-		// Initial values.
-		double angle = startAngle;
-		int previousX = Math.round((float) (circleCenter.x + radius
-				* Math.cos(angle)));
-		int previousY = Math.round((float) (circleCenter.y + radius
-				* Math.sin(angle)));
-
-		// Loop over points to get line instructions that connect them.
-		// Note: i starts intentionally at 1.
-		for (int i = 1; i <= numPoints; i++) {
-			angle = startAngle + (2 * Math.PI * i) / numPoints;
-			int currentX = Math.round((float) (circleCenter.x + radius
-					* Math.cos(angle)));
-			int currentY = Math.round((float) (circleCenter.y + radius
-					* Math.sin(angle)));
-
-			instructions.addAll(this.getLineInstructions(new IntVector3D(
-					previousX, previousY, circleCenter.z), new IntVector3D(
-					currentX, currentY, circleCenter.z)));
-
-			previousX = currentX;
-			previousY = currentY;
-		}
-
-		return instructions;
 	}
 }

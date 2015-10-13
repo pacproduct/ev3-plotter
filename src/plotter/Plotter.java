@@ -13,7 +13,7 @@ public class Plotter {
 		ArmSystem as = new ArmSystem();
 
 		// Initialize geometry utility class.
-		GeometryInstructions geometry = new GeometryInstructions(
+		InstructionsGenerator geometry = new InstructionsGenerator(
 				MOVEMENT_RESOLUTION);
 
 		// Calibrate.
