@@ -202,4 +202,38 @@ public class InstructionsGenerator {
 			previousPos.y = currentPos.y;
 		}
 	}
+
+	/**
+	 * Returns a list of MotorInstructions from given list of degree positions.
+	 *
+	 * @param positions
+	 *            List of positions, in degrees.
+	 * @return List of MotorInstructions ready to be run by an ArmSystem.
+	 */
+	public ArrayList<MotorInstruction> getInstructions(
+			ArrayList<IntVector3D> positions) {
+		// Array of instructions that will be returned.
+		ArrayList<MotorInstruction> instructions = new ArrayList<MotorInstruction>();
+
+		// No positions? Return an empty set of instructions.
+		if (positions.size() == 0) {
+			return instructions;
+		}
+
+		// Start position.
+		IntVector3D previousPos = positions.get(0);
+
+		// Loop over points to get line instructions that connect them.
+		// Note: i starts intentionally at 1.
+		for (int i = 1; i < positions.size(); i++) {
+			IntVector3D currentPos = positions.get(i);
+
+			instructions.addAll(this.getLineInstructions(previousPos,
+					currentPos));
+
+			previousPos = currentPos;
+		}
+
+		return instructions;
+	}
 }

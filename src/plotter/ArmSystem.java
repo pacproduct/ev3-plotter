@@ -2,13 +2,11 @@ package plotter;
 
 import java.util.ArrayList;
 
-import lejos.hardware.lcd.LCD;
 import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.Port;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.robotics.SampleProvider;
-import lejos.utility.Delay;
 
 public class ArmSystem {
 	// Constants.
@@ -145,93 +143,5 @@ public class ArmSystem {
 
 			this.armMotorX.stopSyncWithArmsAndRunOperations(false);
 		}
-	}
-
-	public void armSyncTest() {
-		ArrayList<MotorInstruction> instList = new ArrayList<MotorInstruction>();
-		MotorInstruction inst = null;
-
-		LCD.clear();
-		LCD.drawString("ARM POS => " + this.armMotorX.getPosition(), 0, 0);
-		LCD.drawString("REAL POS => "
-				+ this.armMotorX.getAllMotors().get(0).getPosition(), 0, 1);
-		Delay.msDelay(1000);
-
-		inst = new MotorInstruction(180, 0, 0);
-		instList.clear();
-		instList.add(inst);
-		this.executeInstructions(instList);
-		LCD.clear();
-		LCD.drawString("ARM POS => " + this.armMotorX.getPosition(), 0, 0);
-		LCD.drawString("REAL POS => "
-				+ this.armMotorX.getAllMotors().get(0).getPosition(), 0, 1);
-		Delay.msDelay(2000);
-
-		inst = new MotorInstruction(-180, 0, 0);
-		instList.clear();
-		instList.add(inst);
-		this.executeInstructions(instList);
-		LCD.clear();
-		LCD.drawString("ARM POS => " + this.armMotorX.getPosition(), 0, 0);
-		LCD.drawString("REAL POS => "
-				+ this.armMotorX.getAllMotors().get(0).getPosition(), 0, 1);
-		Delay.msDelay(2000);
-
-		inst = new MotorInstruction(-180, 0, 0);
-		instList.clear();
-		instList.add(inst);
-		this.executeInstructions(instList);
-		LCD.clear();
-		LCD.drawString("ARM POS => " + this.armMotorX.getPosition(), 0, 0);
-		LCD.drawString("REAL POS => "
-				+ this.armMotorX.getAllMotors().get(0).getPosition(), 0, 1);
-		Delay.msDelay(2000);
-
-		inst = new MotorInstruction(180, 0, 0);
-		instList.clear();
-		instList.add(inst);
-		this.executeInstructions(instList);
-		LCD.clear();
-		LCD.drawString("ARM POS => " + this.armMotorX.getPosition(), 0, 0);
-		LCD.drawString("REAL POS => "
-				+ this.armMotorX.getAllMotors().get(0).getPosition(), 0, 1);
-		Delay.msDelay(2000);
-
-		// EV3LargeRegulatedMotor motorX = (EV3LargeRegulatedMotor)
-		// this.armMotorX
-		// .getAllMotors().get(0);
-		// EV3LargeRegulatedMotor motorY = (EV3LargeRegulatedMotor)
-		// this.armMotorX
-		// .getAllMotors().get(1);
-		//
-		// this.syncTest(motorX, motorY);
-		//
-		// motorX.setSpeed(50);
-		// motorY.setSpeed(50);
-		// motorX.rotateTo(180, true);
-		// motorY.rotateTo(180, false);
-		//
-		// this.stopSyncTest(motorX, motorY);
-
-		// EV3LargeRegulatedMotor motorX = (EV3LargeRegulatedMotor)
-		// this.armMotorX
-		// .getAllMotors().get(0);
-		// EV3LargeRegulatedMotor motorY = (EV3LargeRegulatedMotor)
-		// this.armMotorX
-		// .getAllMotors().get(1);
-		//
-		// motorX.setSpeed(50);
-		// motorY.setSpeed(50);
-		// motorX.forward();
-		// motorY.forward();
-		//
-		// this.syncTest(motorX, motorY);
-		//
-		// motorX.setSpeed(100);
-		// motorY.setSpeed(100);
-		//
-		// this.stopSyncTest(motorX, motorY);
-
-		// this.armMotorX.rotate(180, false);
 	}
 }
