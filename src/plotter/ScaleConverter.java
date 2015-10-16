@@ -5,12 +5,6 @@ import java.util.ArrayList;
 public class ScaleConverter {
 	private double ratioMillemetersToDegrees = 0;
 
-	/*
-	 * - De passer des mm aux degrés de rotation - Inversement - De convertir
-	 * une liste de Positions en une liste de AngularPositions (techniquement,
-	 * c'est un vector)
-	 */
-
 	public ScaleConverter(float millimeters, int degrees) {
 		this.ratioMillemetersToDegrees = ((double) degrees)
 				/ ((double) millimeters);

@@ -114,9 +114,11 @@ public class ArmSystem {
 		while (sensorSample[0] == 0) {
 			stopSensor.fetchSample(sensorSample, 0);
 		}
+
 		// Brake motor.
 		armMotor.stop();
 		armMotor.setSpeed(NORMAL_OPERATION_SPEED);
+
 		// Move to final position zero.
 		armMotor.rotate(bounceBackAngle, false);
 		// Set current position as position zero.
