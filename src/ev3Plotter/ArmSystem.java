@@ -1,4 +1,4 @@
-package plotter;
+package ev3Plotter;
 
 import java.util.ArrayList;
 

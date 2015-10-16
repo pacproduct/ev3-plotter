@@ -1,4 +1,4 @@
-package plotter;
+package ev3Plotter;
 
 public class MotorInstruction {
 	// Move types.
