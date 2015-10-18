@@ -24,6 +24,13 @@ public class NetComPacket {
 	// FloatVector3D content.
 	public FloatVector3D floatVector3DContent = null;
 
+	public NetComPacket() {
+	}
+
+	public NetComPacket(int type) {
+		this(type, null);
+	}
+
 	/**
 	 * Constructor.
 	 *

@@ -20,8 +20,7 @@ public class Manager {
 			clientSocket.sendPacket(new NetComPacket(
 					NetComPacket.TYPE_DISPLAY_TEXT, "Poxerfuel!"));
 
-			clientSocket.sendPacket(new NetComPacket(NetComPacket.TYPE_EXIT,
-					null));
+			clientSocket.sendPacket(new NetComPacket(NetComPacket.TYPE_EXIT));
 
 			clientSocket.close();
 		} catch (UnknownHostException e1) {

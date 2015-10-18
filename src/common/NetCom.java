@@ -78,7 +78,7 @@ public class NetCom {
 			break;
 
 		case NetComPacket.TYPE_EXIT:
-			returnPacket = new NetComPacket(packetType, 0);
+			returnPacket = new NetComPacket(packetType);
 			break;
 
 		default:
