@@ -77,6 +77,10 @@ public class NetCom {
 			}
 			break;
 
+		case NetComPacket.TYPE_EXIT:
+			returnPacket = new NetComPacket(packetType, 0);
+			break;
+
 		default:
 			// Nothing to do here, the returned packet will be the null one
 			// initialized at the beginning of this method.
