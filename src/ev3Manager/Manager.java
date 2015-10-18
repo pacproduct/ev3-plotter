@@ -1,34 +1,29 @@
 package ev3Manager;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
+
+import common.NetCom;
+import common.NetComPacket;
 
 public class Manager {
 
 	public static void main(String[] args) {
-		Socket clientSocket;
+		NetCom clientSocket;
 		try {
-			clientSocket = new Socket("10.0.1.1", 7777);
+			clientSocket = new NetCom(new Socket("192.168.1.3", 7777));
 
-			try (OutputStreamWriter out = new OutputStreamWriter(
-					clientSocket.getOutputStream(), StandardCharsets.UTF_8)) {
-				out.write("Bonjour\n");
-				out.flush();
+			clientSocket.sendPacket(new NetComPacket(
+					NetComPacket.TYPE_SET_SPEED, 137));
 
-				try {
-					Thread.sleep(4000);
-				} catch (InterruptedException e) {
-				}
+			clientSocket.sendPacket(new NetComPacket(
+					NetComPacket.TYPE_DISPLAY_TEXT, "Poxerfuel!"));
 
-				out.write("exit\n");
-				out.flush();
+			clientSocket.sendPacket(new NetComPacket(NetComPacket.TYPE_EXIT,
+					null));
 
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
+			clientSocket.close();
 		} catch (UnknownHostException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

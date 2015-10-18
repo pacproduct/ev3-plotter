@@ -108,6 +108,10 @@ public class NetCom {
 			stringToSend = packetType + ":" + packet.stringContent;
 			break;
 
+		case NetComPacket.TYPE_EXIT:
+			stringToSend = packetType;
+			break;
+
 		default:
 			// Nothing to do here, the string to send will be the empty one
 			// initialized at the beginning of this method.
@@ -118,5 +122,11 @@ public class NetCom {
 
 		this.out.write(stringToSend);
 		this.out.flush();
+	}
+
+	public void close() throws IOException {
+		this.socket.shutdownInput();
+		this.socket.shutdownOutput();
+		this.socket.close();
 	}
 }
