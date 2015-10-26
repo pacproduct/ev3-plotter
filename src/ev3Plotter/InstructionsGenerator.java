@@ -208,16 +208,23 @@ public class InstructionsGenerator {
 	 *
 	 * @param positions
 	 *            List of positions, in degrees.
+	 * @param factorizeList
+	 *            If set to TRUE, all unnecessary points will be removed from
+	 *            the list of positions.
 	 * @return List of MotorInstructions ready to be run by an ArmSystem.
 	 */
 	public ArrayList<MotorInstruction> getInstructions(
-			ArrayList<IntVector3D> positions) {
+			ArrayList<IntVector3D> positions, boolean factorizeList) {
 		// Array of instructions that will be returned.
 		ArrayList<MotorInstruction> instructions = new ArrayList<MotorInstruction>();
 
 		// No positions? Return an empty set of instructions.
 		if (positions.size() == 0) {
 			return instructions;
+		}
+
+		if (factorizeList) {
+			this.factorizePositionList(positions);
 		}
 
 		// Start position.
@@ -235,5 +242,79 @@ public class InstructionsGenerator {
 		}
 
 		return instructions;
+	}
+
+	public void factorizePositionList(ArrayList<IntVector3D> positions) {
+		long ax, ay, az, bx, by, bz, cx, cy, cz;
+		long ux, uy, uz, vx, vy, vz;
+		ArrayList<Double> ratios = new ArrayList<Double>();
+		boolean skippablePosition = false;
+		int j;
+		double refRatio;
+
+		// Loop over points to remove all unnecessary ones.
+		// Note: i starts intentionally at 2 (3rd pos).
+		for (int i = 2; i < positions.size(); i++) {
+			ax = positions.get(i - 2).x;
+			ay = positions.get(i - 2).y;
+			az = positions.get(i - 2).z;
+			bx = positions.get(i - 1).x;
+			by = positions.get(i - 1).y;
+			bz = positions.get(i - 1).z;
+			cx = positions.get(i).x;
+			cy = positions.get(i).y;
+			cz = positions.get(i).z;
+			ratios.clear();
+			skippablePosition = true;
+
+			ux = bx - ax;
+			uy = by - ay;
+			uz = bz - az;
+			vx = cx - bx;
+			vy = cy - by;
+			vz = cz - bz;
+
+			if (vx != 0) {
+				ratios.add((double) ux / (double) vx);
+			}
+
+			if (vy != 0) {
+				ratios.add((double) uy / (double) vy);
+			}
+
+			if (vz != 0) {
+				ratios.add((double) uz / (double) vz);
+			}
+
+			if (ratios.size() != 0) {
+				refRatio = ratios.get(0);
+
+				if (refRatio > 0) {
+					// i starts at 1 as first element already stored in
+					// refRatio.
+					for (j = 1; j < ratios.size(); j++) {
+						if (ratios.get(j) != refRatio) {
+							skippablePosition = false;
+							break;
+						}
+					}
+				} else {
+					// When ratio is negative, it means that vector V is facing
+					// the opposite direction. In this case, do not skip any
+					// position.
+					skippablePosition = false;
+				}
+			}
+
+			// If current point and the 2 previous ones are collinear, remove
+			// the previous one as it is useless.
+			if (skippablePosition) {
+				positions.remove(i - 1);
+				// As we need to carry on looping over the array properly,
+				// substract 1 from i because we just removed a past item from
+				// the array.
+				i--;
+			}
+		}
 	}
 }

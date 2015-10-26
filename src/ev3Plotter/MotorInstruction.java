@@ -55,4 +55,12 @@ public class MotorInstruction {
 
 		return MOVE_MIXED;
 	}
+
+	public String toString() {
+		String move = "MoveX: " + this.moveX + ", MoveY: " + this.moveY
+				+ ", MoveZ: " + this.moveZ;
+		String speed = "SpeedRatioX: " + this.speedRatioX + ", SpeedRatioY: "
+				+ this.speedRatioY + ", SpeedRatioZ: " + this.speedRatioZ;
+		return move + ", " + speed;
+	}
 }
