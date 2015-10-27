@@ -31,8 +31,7 @@ public class NetCom {
 	 * @throws IOException
 	 */
 	public NetComPacket receivePacket(int timeoutMs) throws IOException {
-		NetComPacket returnPacket = new NetComPacket(NetComPacket.TYPE_NULL,
-				null);
+		NetComPacket returnPacket = new NetComPacket(NetComPacket.TYPE_NULL);
 
 		this.socket.setSoTimeout(timeoutMs);
 		String receivedLine = this.in.readLine();
@@ -77,6 +76,14 @@ public class NetCom {
 			}
 			break;
 
+		case NetComPacket.TYPE_STACK_MILLIMETER_POSITIONS:
+			// Make sure there are 2 parts in the received packet.
+			if (packetParts.length == 2) {
+				// TODO: Parse positions.
+			}
+			break;
+
+		case NetComPacket.TYPE_RUN_PENDING_ACTIONS:
 		case NetComPacket.TYPE_EXIT:
 			returnPacket = new NetComPacket(packetType);
 			break;
@@ -105,11 +112,19 @@ public class NetCom {
 		String packetType = String.valueOf(packet.type);
 		switch (packet.type) {
 		case NetComPacket.TYPE_SET_SPEED:
-			stringToSend = packetType + ":" + packet.integerContent.toString();
+			stringToSend = packetType + ":" + packet.integerValue.toString();
 			break;
 
 		case NetComPacket.TYPE_DISPLAY_TEXT:
-			stringToSend = packetType + ":" + packet.stringContent;
+			stringToSend = packetType + ":" + packet.stringValue;
+			break;
+
+		case NetComPacket.TYPE_STACK_MILLIMETER_POSITIONS:
+			// TODO.
+			break;
+
+		case NetComPacket.TYPE_RUN_PENDING_ACTIONS:
+			// TODO.
 			break;
 
 		case NetComPacket.TYPE_EXIT:

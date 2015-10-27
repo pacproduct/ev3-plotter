@@ -1,13 +1,13 @@
 package ev3Plotter;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 import lejos.hardware.lcd.LCD;
-import lejos.utility.Delay;
+
+import common.NetCom;
+import common.NetComPacket;
 
 public class Plotter {
 	// Global resolution to be applied to drawings/movements.
@@ -18,74 +18,41 @@ public class Plotter {
 	public static final float SCALE_REF_MILLIMETERS = 100.0f;
 	// Scale converter reference, in degrees.
 	public static final int SCALE_REF_DEGREES = 720;
+	// Port accepting clients.
+	public static final int LISTENING_PORT = 3000;
+	// Timeout
+	public static final int WAITING_FOR_CLIENT_PACKET_TIMEOUT = 3600 * 1000;
 
-	private static ArmSystem as = null;
-	private static InstructionsGenerator ig = null;
-	private static ScaleConverter sc = null;
+	protected static ArmSystem as = null;
+	protected static InstructionsGenerator ig = null;
+	protected static ScaleConverter sc = null;
 
 	public static void main(String[] args) {
-		LCD.drawString("Initializing...", 0, 0);
+		NetCom netCom;
+		Plotter.displayText("Initializing...");
 
-		ServerSocket serverSocket;
-		Socket clientSocket;
-		BufferedReader in;
-		// PrintWriter out;
-		boolean exitPlotter = false;
-		String receivedLine;
+		// Instantiate components.
+		Plotter.as = new ArmSystem();
+		Plotter.ig = new InstructionsGenerator(false);
+		Plotter.sc = new ScaleConverter(Plotter.SCALE_REF_MILLIMETERS,
+				Plotter.SCALE_REF_DEGREES);
 
-		LCD.clear();
-		LCD.drawString("Waiting...", 0, 0);
+		// Calibrate arms.
+		// as.calibrate();
+
+		// Wait for a client.
+		Plotter.displayText("Waiting 4 client...");
 		try {
-			serverSocket = new ServerSocket(7777);
-			// serverSocket.setSoTimeout(60000);
-			clientSocket = serverSocket.accept();
+			netCom = Plotter.waitForClient(LISTENING_PORT);
 
-			in = new BufferedReader(new InputStreamReader(
-					clientSocket.getInputStream()));
-			// out = new PrintWriter(clientSocket.getOutputStream(), true);
-
-			while (!exitPlotter) {
-				try {
-					receivedLine = in.readLine();
-					// Send data back to client
-					// out.println(line);
-					if (receivedLine == null) {
-						LCD.clear();
-						LCD.drawString("NULL!", 0, 0);
-						exitPlotter = true;
-					} else if (receivedLine.equals("exit")) {
-						exitPlotter = true;
-					} else {
-						LCD.clear();
-						LCD.drawString(receivedLine, 0, 0);
-					}
-				} catch (IOException e) {
-					System.out.println("Read failed");
-					exitPlotter = true;
-				}
-			}
-
-			LCD.clear();
-			LCD.drawString("Bye!", 0, 0);
-			Delay.msDelay(2000);
-
-		} catch (IOException e1) {
+			// Fire.
+			Plotter.displayText("Initializing...");
+			Plotter.handleClient(netCom);
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			e.printStackTrace();
 		}
 
-		// // Instantiate components.
-		// Plotter.as = new ArmSystem();
-		// Plotter.ig = new InstructionsGenerator(false);
-		// Plotter.sc = new ScaleConverter(Plotter.SCALE_REF_MILLIMETERS,
-		// Plotter.SCALE_REF_DEGREES);
-		//
-		// // Calibrate arms.
-		// // as.calibrate();
-		//
-		// // System ready!
-		// LCD.clear();
-		// LCD.drawString("Ready.", 0, 0);
 		//
 		// // DEBUG TEST.
 		// // 1. Receive an array of millimeters positions.
@@ -106,5 +73,34 @@ public class Plotter {
 		// // 4. Fire in the hole.
 		// Plotter.as.executeInstructions(instructions);
 		// // END OF DEBUG.
+	}
+
+	protected static NetCom waitForClient(int port) throws IOException {
+		ServerSocket serverSocket;
+		Socket clientSocket;
+
+		serverSocket = new ServerSocket(port);
+		clientSocket = serverSocket.accept();
+		serverSocket.close();
+
+		return new NetCom(clientSocket);
+	}
+
+	protected static void handleClient(NetCom netCom) throws IOException {
+		NetComPacket packet = null;
+
+		Boolean exitFlag = false;
+		while (!exitFlag) {
+			packet = netCom.receivePacket(WAITING_FOR_CLIENT_PACKET_TIMEOUT);
+
+			if (NetComPacket.TYPE_EXIT == packet.type) {
+				exitFlag = true;
+			}
+		}
+	}
+
+	protected static void displayText(String text) {
+		LCD.clear();
+		LCD.drawString(text, 0, 0);
 	}
 }

@@ -1,7 +1,11 @@
 package test.server;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 
+import common.NetCom;
 import common.NetComPacket;
 
 import ev3Plotter.FloatVector3D;
@@ -14,34 +18,34 @@ public class Server {
 
 	public static void main(String[] args) throws InterruptedException {
 
-		// ServerSocket serverSocket;
-		// Socket clientSocket;
-		//
-		// int timeout = 0;
-		//
-		// try {
-		// serverSocket = new ServerSocket(7777);
-		// clientSocket = serverSocket.accept();
-		//
-		// NetCom netCom = new NetCom(clientSocket);
-		//
-		// NetComPacket packet = null;
-		//
-		// Boolean exitFlag = false;
-		// while (!exitFlag) {
-		// packet = netCom.receivePacket(timeout);
-		//
-		// if (NetComPacket.TYPE_EXIT == packet.type) {
-		// exitFlag = true;
-		// }
-		//
-		// Server.displayPacketData(packet);
-		// }
-		//
-		// } catch (IOException e1) {
-		// // TODO Auto-generated catch block
-		// e1.printStackTrace();
-		// }
+		ServerSocket serverSocket;
+		Socket clientSocket;
+
+		int timeout = 0;
+
+		try {
+			serverSocket = new ServerSocket(7777);
+			clientSocket = serverSocket.accept();
+
+			NetCom netCom = new NetCom(clientSocket);
+
+			NetComPacket packet = null;
+
+			Boolean exitFlag = false;
+			while (!exitFlag) {
+				packet = netCom.receivePacket(timeout);
+
+				if (NetComPacket.TYPE_EXIT == packet.type) {
+					exitFlag = true;
+				}
+
+				Server.displayPacketData(packet);
+			}
+
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		// DEBUG TEST.
 		// 1. Receive an array of millimeters positions.
@@ -49,7 +53,7 @@ public class Server {
 
 		long startTime = System.currentTimeMillis();
 
-		for (int i = 0; i < 100000; i++) {
+		for (int i = 0; i < 1; i++) {
 			millimetersPositions.add(new FloatVector3D(0, 0, 0));
 			millimetersPositions.add(new FloatVector3D(10, 10, 10));
 			millimetersPositions.add(new FloatVector3D(5, 5, 5));
@@ -98,12 +102,13 @@ public class Server {
 		System.out
 				.println("Simplified instruction list generation: Elapsed time: "
 						+ elapsedTime + "ms");
-		startTime = System.currentTimeMillis();
+
+		System.out.println("nb lines: " + instructions.size());
 
 		// 4. Fire in the hole.
-		// for (MotorInstruction mi : instructions) {
-		// System.out.println(mi);
-		// }
+		for (MotorInstruction mi : instructions) {
+			System.out.println(mi);
+		}
 		// END OF DEBUG.
 
 	}
@@ -113,12 +118,12 @@ public class Server {
 		switch (packet.type) {
 		case NetComPacket.TYPE_SET_SPEED:
 			System.out.println("type  : " + "speed");
-			System.out.println("value : " + packet.integerContent.toString());
+			System.out.println("value : " + packet.integerValue.toString());
 			break;
 
 		case NetComPacket.TYPE_DISPLAY_TEXT:
 			System.out.println("type  : " + "text");
-			System.out.println("value : " + packet.stringContent);
+			System.out.println("value : " + packet.stringValue);
 			break;
 
 		case NetComPacket.TYPE_EXIT:

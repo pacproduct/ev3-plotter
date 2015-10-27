@@ -224,7 +224,7 @@ public class InstructionsGenerator {
 		}
 
 		if (factorizeList) {
-			this.factorizePositionList(positions);
+			positions = this.factorizePositionList(positions);
 		}
 
 		// Start position.
@@ -244,7 +244,8 @@ public class InstructionsGenerator {
 		return instructions;
 	}
 
-	public void factorizePositionList(ArrayList<IntVector3D> positions) {
+	public ArrayList<IntVector3D> factorizePositionList(
+			ArrayList<IntVector3D> positions) {
 		long ax, ay, az, bx, by, bz, cx, cy, cz;
 		long ux, uy, uz, vx, vy, vz;
 		ArrayList<Double> ratios = new ArrayList<Double>();
@@ -252,8 +253,11 @@ public class InstructionsGenerator {
 		int j;
 		double refRatio;
 
+		ArrayList<IntVector3D> out = new ArrayList<IntVector3D>();
+
 		// Loop over points to remove all unnecessary ones.
 		// Note: i starts intentionally at 2 (3rd pos).
+		out.add(positions.get(0));
 		for (int i = 2; i < positions.size(); i++) {
 			ax = positions.get(i - 2).x;
 			ay = positions.get(i - 2).y;
@@ -309,12 +313,17 @@ public class InstructionsGenerator {
 			// If current point and the 2 previous ones are collinear, remove
 			// the previous one as it is useless.
 			if (skippablePosition) {
-				positions.remove(i - 1);
-				// As we need to carry on looping over the array properly,
-				// substract 1 from i because we just removed a past item from
-				// the array.
-				i--;
+				// positions.remove(i - 1);
+				// // As we need to carry on looping over the array properly,
+				// // substract 1 from i because we just removed a past item
+				// from
+				// // the array.
+				// i--;
+			} else {
+				out.add(positions.get(i - 1));
 			}
 		}
+		out.add(positions.get(positions.size() - 1));
+		return out;
 	}
 }

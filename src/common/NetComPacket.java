@@ -1,5 +1,7 @@
 package common;
 
+import java.util.ArrayList;
+
 import ev3Plotter.FloatVector3D;
 
 public class NetComPacket {
@@ -7,28 +9,29 @@ public class NetComPacket {
 	// Types that do not need values.
 	public static final int TYPE_NULL = 0;
 	public static final int TYPE_EXIT = 1;
+	public static final int TYPE_RUN_PENDING_ACTIONS = 2;
 	// Integer types.
 	public static final int TYPE_SET_SPEED = 100;
 	// String types.
 	public static final int TYPE_DISPLAY_TEXT = 200;
-	// FloatVector3D types.
-	public static final int TYPE_GO_TO_POSITION = 300;
+	// FloatVector3D list types.
+	public static final int TYPE_STACK_MILLIMETER_POSITIONS = 300;
 
 	// Packet type.
 	public int type = NetComPacket.TYPE_NULL;
 
 	// Integer content.
-	public Integer integerContent = 0;
+	public Integer integerValue = 0;
 	// String content.
-	public String stringContent = null;
+	public String stringValue = null;
 	// FloatVector3D content.
-	public FloatVector3D floatVector3DContent = null;
+	public ArrayList<FloatVector3D> floatVector3DList = new ArrayList<FloatVector3D>();
 
 	public NetComPacket() {
 	}
 
 	public NetComPacket(int type) {
-		this(type, null);
+		this.type = type;
 	}
 
 	/**
@@ -39,15 +42,18 @@ public class NetComPacket {
 	 * @param value
 	 *            Packet value.
 	 */
-	public NetComPacket(int type, Object value) {
-		this.type = type;
+	public NetComPacket(int type, Integer value) {
+		this(type);
+		this.integerValue = value;
+	}
 
-		if (value instanceof Integer) {
-			this.integerContent = (Integer) value;
-		} else if (value instanceof String) {
-			this.stringContent = (String) value;
-		} else if (value instanceof FloatVector3D) {
-			this.floatVector3DContent = (FloatVector3D) value;
-		}
+	public NetComPacket(int type, String value) {
+		this(type);
+		this.stringValue = value;
+	}
+
+	public NetComPacket(int type, ArrayList<FloatVector3D> value) {
+		this(type);
+		this.floatVector3DList = (ArrayList<FloatVector3D>) value;
 	}
 }
