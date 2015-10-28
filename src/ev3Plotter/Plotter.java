@@ -51,6 +51,9 @@ public class Plotter {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		//
@@ -86,7 +89,7 @@ public class Plotter {
 		return new NetCom(clientSocket);
 	}
 
-	protected static void handleClient(NetCom netCom) throws IOException {
+	protected static void handleClient(NetCom netCom) throws Exception {
 		NetComPacket packet = null;
 
 		Boolean exitFlag = false;

@@ -1,4 +1,4 @@
-package ev3Plotter;
+package common;
 
 public class IntVector3D {
 	public int x = 0;

@@ -5,19 +5,18 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import common.FloatVector3D;
+import common.IntVector3D;
 import common.NetCom;
 import common.NetComPacket;
 
-import ev3Plotter.FloatVector3D;
 import ev3Plotter.InstructionsGenerator;
-import ev3Plotter.IntVector3D;
 import ev3Plotter.MotorInstruction;
 import ev3Plotter.ScaleConverter;
 
 public class Server {
 
 	public static void main(String[] args) throws InterruptedException {
-
 		ServerSocket serverSocket;
 		Socket clientSocket;
 
@@ -45,6 +44,9 @@ public class Server {
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		// DEBUG TEST.
@@ -55,24 +57,9 @@ public class Server {
 
 		for (int i = 0; i < 1; i++) {
 			millimetersPositions.add(new FloatVector3D(0, 0, 0));
-			millimetersPositions.add(new FloatVector3D(10, 10, 10));
-			millimetersPositions.add(new FloatVector3D(5, 5, 5));
-			millimetersPositions.add(new FloatVector3D(0, 0, 0));
-			millimetersPositions.add(new FloatVector3D(0, 0, 0));
-			millimetersPositions.add(new FloatVector3D(50, 0, 0));
-			millimetersPositions.add(new FloatVector3D(100, 50, 0));
-			millimetersPositions.add(new FloatVector3D(50, 100, 0));
-			millimetersPositions.add(new FloatVector3D(0, 0, 0));
-			millimetersPositions.add(new FloatVector3D(0, 0, 20));
-			millimetersPositions.add(new FloatVector3D(0, 0, 10));
-			millimetersPositions.add(new FloatVector3D(0, 0, 0));
-			millimetersPositions.add(new FloatVector3D(0, 0, 0));
-			millimetersPositions.add(new FloatVector3D(25, 75, 0));
-			millimetersPositions.add(new FloatVector3D(0, 50, 0));
-			millimetersPositions.add(new FloatVector3D(50, 0, 0));
-			millimetersPositions.add(new FloatVector3D(50, 0, 50));
-			millimetersPositions.add(new FloatVector3D(50, 0, 50));
-			millimetersPositions.add(new FloatVector3D(50, 0, 0));
+			millimetersPositions.add(new FloatVector3D(1, 2, 3));
+			millimetersPositions.add(new FloatVector3D(6, 2, 3));
+			millimetersPositions.add(new FloatVector3D(5, 0, 0));
 		}
 
 		long stopTime = System.currentTimeMillis();

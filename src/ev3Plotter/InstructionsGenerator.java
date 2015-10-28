@@ -2,6 +2,8 @@ package ev3Plotter;
 
 import java.util.ArrayList;
 
+import common.IntVector3D;
+
 public class InstructionsGenerator {
 	// Default resolution is the finest.
 	private int resolution = 1;
@@ -278,52 +280,55 @@ public class InstructionsGenerator {
 			vy = cy - by;
 			vz = cz - bz;
 
-			if (vx != 0) {
-				ratios.add((double) ux / (double) vx);
-			}
+			// Handle all special cases where we know for sure there's no
+			// possible simplification.
+			if (ux != 0 && vx == 0 || uy != 0 && vy == 0 || uz != 0 && vz == 0
+					|| ux == 0 && vx != 0 || uy == 0 && vy != 0 || uz == 0
+					&& vz != 0) {
+				skippablePosition = false;
+			} else {
+				if (vx != 0) {
+					ratios.add((double) ux / (double) vx);
+				}
 
-			if (vy != 0) {
-				ratios.add((double) uy / (double) vy);
-			}
+				if (vy != 0) {
+					ratios.add((double) uy / (double) vy);
+				}
 
-			if (vz != 0) {
-				ratios.add((double) uz / (double) vz);
-			}
+				if (vz != 0) {
+					ratios.add((double) uz / (double) vz);
+				}
 
-			if (ratios.size() != 0) {
-				refRatio = ratios.get(0);
+				if (ratios.size() != 0) {
+					refRatio = ratios.get(0);
 
-				if (refRatio > 0) {
-					// i starts at 1 as first element already stored in
-					// refRatio.
-					for (j = 1; j < ratios.size(); j++) {
-						if (ratios.get(j) != refRatio) {
-							skippablePosition = false;
-							break;
+					if (refRatio > 0) {
+						// i starts at 1 as first element already stored in
+						// refRatio.
+						for (j = 1; j < ratios.size(); j++) {
+							if (ratios.get(j) != refRatio) {
+								skippablePosition = false;
+								break;
+							}
 						}
+					} else {
+						// When ratio is negative, it means that vector V is
+						// facing
+						// the opposite direction. In this case, do not skip any
+						// position.
+						skippablePosition = false;
 					}
-				} else {
-					// When ratio is negative, it means that vector V is facing
-					// the opposite direction. In this case, do not skip any
-					// position.
-					skippablePosition = false;
 				}
 			}
 
-			// If current point and the 2 previous ones are collinear, remove
-			// the previous one as it is useless.
-			if (skippablePosition) {
-				// positions.remove(i - 1);
-				// // As we need to carry on looping over the array properly,
-				// // substract 1 from i because we just removed a past item
-				// from
-				// // the array.
-				// i--;
-			} else {
+			// Add all not skippable points.
+			if (!skippablePosition) {
 				out.add(positions.get(i - 1));
 			}
 		}
+
 		out.add(positions.get(positions.size() - 1));
+
 		return out;
 	}
 }

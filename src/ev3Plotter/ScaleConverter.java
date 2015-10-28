@@ -2,6 +2,9 @@ package ev3Plotter;
 
 import java.util.ArrayList;
 
+import common.FloatVector3D;
+import common.IntVector3D;
+
 public class ScaleConverter {
 	private double ratioMillemetersToDegrees = 0;
 

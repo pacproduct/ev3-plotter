@@ -1,4 +1,4 @@
-package ev3Plotter;
+package common;
 
 public class FloatVector3D {
 	public float x = 0;

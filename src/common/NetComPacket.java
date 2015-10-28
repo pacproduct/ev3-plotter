@@ -2,8 +2,6 @@ package common;
 
 import java.util.ArrayList;
 
-import ev3Plotter.FloatVector3D;
-
 public class NetComPacket {
 	// Constants: Packet types.
 	// Types that do not need values.

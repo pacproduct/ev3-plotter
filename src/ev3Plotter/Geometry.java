@@ -2,6 +2,8 @@ package ev3Plotter;
 
 import java.util.ArrayList;
 
+import common.FloatVector3D;
+
 public class Geometry {
 
 	/**

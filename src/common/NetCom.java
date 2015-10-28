@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 public class NetCom {
 	private Socket socket = null;
@@ -28,9 +29,9 @@ public class NetCom {
 	 * @param timeoutMs
 	 *            Timeout, in milliseconds. Set to 0 for infinite wait.
 	 * @return The read packet.
-	 * @throws IOException
+	 * @throws Exception
 	 */
-	public NetComPacket receivePacket(int timeoutMs) throws IOException {
+	public NetComPacket receivePacket(int timeoutMs) throws Exception {
 		NetComPacket returnPacket = new NetComPacket(NetComPacket.TYPE_NULL);
 
 		this.socket.setSoTimeout(timeoutMs);
@@ -55,6 +56,7 @@ public class NetCom {
 		try {
 			packetType = Integer.parseInt(packetParts[0]);
 		} catch (NumberFormatException e) {
+			throw new Exception("Invalid packet content: " + receivedLine);
 		}
 
 		switch (packetType) {
@@ -65,7 +67,11 @@ public class NetCom {
 					Integer speed = Integer.parseInt(packetParts[1]);
 					returnPacket = new NetComPacket(packetType, speed);
 				} catch (NumberFormatException e) {
+					throw new Exception("Invalid packet content: "
+							+ receivedLine);
 				}
+			} else {
+				throw new Exception("Invalid packet content: " + receivedLine);
 			}
 			break;
 
@@ -73,13 +79,45 @@ public class NetCom {
 			// Make sure there are 2 parts in the received packet.
 			if (packetParts.length == 2) {
 				returnPacket = new NetComPacket(packetType, packetParts[1]);
+			} else {
+				throw new Exception("Invalid packet content: " + receivedLine);
 			}
 			break;
 
 		case NetComPacket.TYPE_STACK_MILLIMETER_POSITIONS:
 			// Make sure there are 2 parts in the received packet.
 			if (packetParts.length == 2) {
-				// TODO: Parse positions.
+				// Parse positions.
+				ArrayList<FloatVector3D> positions = new ArrayList<FloatVector3D>();
+				String[] positionStrings;
+				positionStrings = packetParts[1].split(";");
+				float x, y, z;
+
+				String[] coordinates;
+				// Convert all position strings to vectors.
+				for (String positionString : positionStrings) {
+					coordinates = positionString.split(",");
+
+					if (coordinates.length == 3) {
+						try {
+							x = Float.parseFloat(coordinates[0]);
+							y = Float.parseFloat(coordinates[1]);
+							z = Float.parseFloat(coordinates[2]);
+						} catch (NumberFormatException e) {
+							throw new Exception("Invalid packet content: "
+									+ receivedLine);
+						}
+
+						positions.add(new FloatVector3D(x, y, z));
+					} else {
+						throw new Exception("Invalid packet content: "
+								+ receivedLine);
+					}
+				}
+
+				returnPacket = new NetComPacket(packetType, positions);
+			} else {
+				throw new Exception("Invalid packet content: " + receivedLine);
 			}
 			break;
 
@@ -106,29 +144,33 @@ public class NetCom {
 	 * @throws IOException
 	 */
 	public void sendPacket(NetComPacket packet) throws IOException {
-		String stringToSend = "";
+		StringBuilder stringToSend = new StringBuilder();
 
 		// Extract packet type.
 		String packetType = String.valueOf(packet.type);
 		switch (packet.type) {
 		case NetComPacket.TYPE_SET_SPEED:
-			stringToSend = packetType + ":" + packet.integerValue.toString();
+			stringToSend.append(packetType + ":"
+					+ packet.integerValue.toString());
 			break;
 
 		case NetComPacket.TYPE_DISPLAY_TEXT:
-			stringToSend = packetType + ":" + packet.stringValue;
+			stringToSend.append(packetType + ":" + packet.stringValue);
 			break;
 
 		case NetComPacket.TYPE_STACK_MILLIMETER_POSITIONS:
-			// TODO.
+			for (FloatVector3D position : packet.floatVector3DList) {
+				if (!stringToSend.equals("")) {
+					stringToSend.append(";");
+				}
+				stringToSend.append(position.x + "," + position.y + ","
+						+ position.z);
+			}
 			break;
 
 		case NetComPacket.TYPE_RUN_PENDING_ACTIONS:
-			// TODO.
-			break;
-
 		case NetComPacket.TYPE_EXIT:
-			stringToSend = packetType;
+			stringToSend.append(packetType);
 			break;
 
 		default:
@@ -137,9 +179,9 @@ public class NetCom {
 			break;
 		}
 
-		stringToSend += "\n";
+		stringToSend.append("\n");
 
-		this.out.write(stringToSend);
+		this.out.write(stringToSend.toString());
 		this.out.flush();
 	}
 
