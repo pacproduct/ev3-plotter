@@ -3,9 +3,11 @@ package ev3Plotter;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import lejos.hardware.lcd.LCD;
 
+import common.IntVector3D;
 import common.NetCom;
 import common.NetComPacket;
 
@@ -26,6 +28,7 @@ public class Plotter {
 	protected static ArmSystem as = null;
 	protected static InstructionsGenerator ig = null;
 	protected static ScaleConverter sc = null;
+	protected static ArrayList<MotorInstruction> instructionsStack = new ArrayList<MotorInstruction>();
 
 	public static void main(String[] args) {
 		NetCom netCom;
@@ -96,8 +99,31 @@ public class Plotter {
 		while (!exitFlag) {
 			packet = netCom.receivePacket(WAITING_FOR_CLIENT_PACKET_TIMEOUT);
 
-			if (NetComPacket.TYPE_EXIT == packet.type) {
+			switch (packet.type) {
+			case NetComPacket.TYPE_SET_SPEED:
+				Plotter.as.setBaseSpeed(packet.integerValue);
+				break;
+
+			case NetComPacket.TYPE_DISPLAY_TEXT:
+				Plotter.displayText(packet.stringValue);
+				break;
+
+			case NetComPacket.TYPE_STACK_MILLIMETER_POSITIONS:
+				ArrayList<IntVector3D> degreePositions = Plotter.sc
+						.millimetersToDegrees(packet.floatVector3DList);
+
+				Plotter.instructionsStack.addAll(Plotter.ig.getInstructions(
+						degreePositions, true));
+				break;
+
+			case NetComPacket.TYPE_RUN_PENDING_ACTIONS:
+				Plotter.as.executeInstructions(Plotter.instructionsStack);
+				Plotter.instructionsStack.clear();
+				break;
+
+			case NetComPacket.TYPE_EXIT:
 				exitFlag = true;
+				break;
 			}
 		}
 	}

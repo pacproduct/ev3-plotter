@@ -18,7 +18,7 @@ public class ArmSystem {
 	// Motor speed when calibrating.
 	public static final int CALIBRATION_SPEED = 400;
 	// Motor speed when operating.
-	public static final int NORMAL_OPERATION_SPEED = 200;
+	public static final int DEFAULT_OPERATION_SPEED = 200;
 	// Angle to rotate motors just after going backward until sensor got
 	// pressed, to move them to position zero.
 	public static final int ANGLE_X_TO_POS_ZERO = 50;
@@ -44,6 +44,9 @@ public class ArmSystem {
 	private SampleProvider sensorY;
 	private SampleProvider sensorZ;
 
+	// Others.
+	private int baseSpeed = DEFAULT_OPERATION_SPEED;
+
 	/**
 	 * Constructor.
 	 */
@@ -55,9 +58,9 @@ public class ArmSystem {
 		this.armMotorZ = new ArmMotor(new Port[] { MotorPort.D },
 				MOTOR_Y_DIRECTION, false, MECH_PLAY_Z);
 
-		this.armMotorX.setSpeed(NORMAL_OPERATION_SPEED);
-		this.armMotorY.setSpeed(NORMAL_OPERATION_SPEED);
-		this.armMotorZ.setSpeed(NORMAL_OPERATION_SPEED);
+		this.armMotorX.setSpeed(this.baseSpeed);
+		this.armMotorY.setSpeed(this.baseSpeed);
+		this.armMotorZ.setSpeed(this.baseSpeed);
 
 		// Set min/max positions.
 		this.armMotorX.setMinimumPosition(MIN_POS_X);
@@ -117,7 +120,7 @@ public class ArmSystem {
 
 		// Brake motor.
 		armMotor.stop();
-		armMotor.setSpeed(NORMAL_OPERATION_SPEED);
+		armMotor.setSpeed(this.baseSpeed);
 
 		// Move to final position zero.
 		armMotor.rotate(bounceBackAngle, false);
@@ -131,19 +134,23 @@ public class ArmSystem {
 					this.armMotorZ });
 
 			// Apply speed ratios.
-			this.armMotorX.setSpeed(Math.round(NORMAL_OPERATION_SPEED
+			this.armMotorX.setSpeed(Math.round(this.baseSpeed
 					* instruction.speedRatioX));
-			this.armMotorY.setSpeed(Math.round(NORMAL_OPERATION_SPEED
+			this.armMotorY.setSpeed(Math.round(this.baseSpeed
 					* instruction.speedRatioY));
-			this.armMotorZ.setSpeed(Math.round(NORMAL_OPERATION_SPEED
+			this.armMotorZ.setSpeed(Math.round(this.baseSpeed
 					* instruction.speedRatioZ));
 
 			// Apply move instructions.
-			this.armMotorX.rotate(instruction.moveX, true);
-			this.armMotorY.rotate(instruction.moveY, true);
-			this.armMotorZ.rotate(instruction.moveZ, true);
+			this.armMotorX.rotateTo(instruction.moveX, true);
+			this.armMotorY.rotateTo(instruction.moveY, true);
+			this.armMotorZ.rotateTo(instruction.moveZ, true);
 
 			this.armMotorX.stopSyncWithArmsAndRunOperations(false);
 		}
+	}
+
+	public void setBaseSpeed(int speed) {
+		this.baseSpeed = speed;
 	}
 }

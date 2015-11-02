@@ -128,8 +128,8 @@ public class InstructionsGenerator {
 		float speedRatioY = distance.y / maxDistance;
 		float speedRatioZ = distance.z / maxDistance;
 
-		MotorInstruction instruction = new MotorInstruction(distance.x,
-				distance.y, distance.z, speedRatioX, speedRatioY, speedRatioZ);
+		MotorInstruction instruction = new MotorInstruction(end.x, end.y,
+				end.z, speedRatioX, speedRatioY, speedRatioZ);
 
 		// Add the only needed instruction.
 		instructions.add(instruction);
@@ -170,7 +170,7 @@ public class InstructionsGenerator {
 			if (MotorInstruction.MOVE_X == lastestInstruction.getMoveType()) {
 				lastestInstruction.moveX += move.x;
 			} else {
-				instructions.add(new MotorInstruction(move.x, 0, 0));
+				instructions.add(new MotorInstruction(currentPos.x, 0, 0));
 			}
 
 			previousPos.x = currentPos.x;
@@ -184,7 +184,7 @@ public class InstructionsGenerator {
 			if (MotorInstruction.MOVE_Y == lastestInstruction.getMoveType()) {
 				lastestInstruction.moveY += move.y;
 			} else {
-				instructions.add(new MotorInstruction(0, move.y, 0));
+				instructions.add(new MotorInstruction(0, currentPos.y, 0));
 			}
 
 			previousPos.y = currentPos.y;
@@ -198,7 +198,7 @@ public class InstructionsGenerator {
 			if (MotorInstruction.MOVE_Z == lastestInstruction.getMoveType()) {
 				lastestInstruction.moveZ += move.z;
 			} else {
-				instructions.add(new MotorInstruction(0, 0, move.z));
+				instructions.add(new MotorInstruction(0, 0, currentPos.z));
 			}
 
 			previousPos.y = currentPos.y;
