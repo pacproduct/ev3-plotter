@@ -10,17 +10,27 @@ import common.NetComPacket;
 public class Manager {
 
 	public static void main(String[] args) {
+		// Check parameters.
+		if (args.length < 2) {
+			System.err
+					.println("This program is waiting for 2 parameters: remoteHost command");
+			System.exit(1);
+		}
+
+		// Get parameters
+		String remoteHost = args[0];
+		String commandToSend = args[1];
+
 		NetCom clientSocket;
 		try {
-			clientSocket = new NetCom(new Socket("192.168.1.3", 7777));
+			clientSocket = new NetCom(new Socket(remoteHost, 7777));
 
-			clientSocket.sendPacket(new NetComPacket(
-					NetComPacket.TYPE_SET_SPEED, 137));
+			NetComPacket packetToSend = NetCom
+					.parseRawStringPacket(commandToSend);
 
-			clientSocket.sendPacket(new NetComPacket(
-					NetComPacket.TYPE_DISPLAY_TEXT, "Poxerfuel!"));
+			clientSocket.sendPacket(packetToSend);
 
-			clientSocket.sendPacket(new NetComPacket(NetComPacket.TYPE_EXIT));
+			Thread.sleep(5000);
 
 			clientSocket.close();
 		} catch (UnknownHostException e1) {
@@ -29,6 +39,9 @@ public class Manager {
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

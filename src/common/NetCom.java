@@ -32,19 +32,24 @@ public class NetCom {
 	 * @throws Exception
 	 */
 	public NetComPacket receivePacket(int timeoutMs) throws Exception {
-		NetComPacket returnPacket = new NetComPacket(NetComPacket.TYPE_NULL);
-
 		this.socket.setSoTimeout(timeoutMs);
 		String receivedLine = this.in.readLine();
 
+		return NetCom.parseRawStringPacket(receivedLine);
+	}
+
+	public static NetComPacket parseRawStringPacket(String rawStringPacket)
+			throws Exception {
+		NetComPacket returnPacket = new NetComPacket(NetComPacket.TYPE_NULL);
+
 		// If receivedLine is null, return null packet.
-		if (receivedLine == null) {
+		if (rawStringPacket == null) {
 			return returnPacket;
 		}
 
 		// Parse received line.
 		String packetParts[] = null;
-		packetParts = receivedLine.split(":", 2);
+		packetParts = rawStringPacket.split(":", 2);
 
 		// The packet needs to have at least 1 part. Else, return null packet.
 		if (packetParts.length < 1) {
@@ -56,7 +61,7 @@ public class NetCom {
 		try {
 			packetType = Integer.parseInt(packetParts[0]);
 		} catch (NumberFormatException e) {
-			throw new Exception("Invalid packet content: " + receivedLine);
+			throw new Exception("Invalid packet content: " + rawStringPacket);
 		}
 
 		switch (packetType) {
@@ -68,10 +73,11 @@ public class NetCom {
 					returnPacket = new NetComPacket(packetType, speed);
 				} catch (NumberFormatException e) {
 					throw new Exception("Invalid packet content: "
-							+ receivedLine);
+							+ rawStringPacket);
 				}
 			} else {
-				throw new Exception("Invalid packet content: " + receivedLine);
+				throw new Exception("Invalid packet content: "
+						+ rawStringPacket);
 			}
 			break;
 
@@ -80,7 +86,8 @@ public class NetCom {
 			if (packetParts.length == 2) {
 				returnPacket = new NetComPacket(packetType, packetParts[1]);
 			} else {
-				throw new Exception("Invalid packet content: " + receivedLine);
+				throw new Exception("Invalid packet content: "
+						+ rawStringPacket);
 			}
 			break;
 
@@ -105,19 +112,20 @@ public class NetCom {
 							z = Float.parseFloat(coordinates[2]);
 						} catch (NumberFormatException e) {
 							throw new Exception("Invalid packet content: "
-									+ receivedLine);
+									+ rawStringPacket);
 						}
 
 						positions.add(new FloatVector3D(x, y, z));
 					} else {
 						throw new Exception("Invalid packet content: "
-								+ receivedLine);
+								+ rawStringPacket);
 					}
 				}
 
 				returnPacket = new NetComPacket(packetType, positions);
 			} else {
-				throw new Exception("Invalid packet content: " + receivedLine);
+				throw new Exception("Invalid packet content: "
+						+ rawStringPacket);
 			}
 			break;
 
@@ -174,8 +182,8 @@ public class NetCom {
 			break;
 
 		default:
-			// Nothing to do here, the string to send will be the empty one
-			// initialized at the beginning of this method.
+			// Unknown or null type packet.
+			stringToSend.append(NetComPacket.TYPE_NULL);
 			break;
 		}
 

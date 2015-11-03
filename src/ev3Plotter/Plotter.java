@@ -21,7 +21,7 @@ public class Plotter {
 	// Scale converter reference, in degrees.
 	public static final int SCALE_REF_DEGREES = 720;
 	// Port accepting clients.
-	public static final int LISTENING_PORT = 3000;
+	public static final int LISTENING_PORT = 7777;
 	// Timeout
 	public static final int WAITING_FOR_CLIENT_PACKET_TIMEOUT = 3600 * 1000;
 
@@ -30,7 +30,7 @@ public class Plotter {
 	protected static ScaleConverter sc = null;
 	protected static ArrayList<MotorInstruction> instructionsStack = new ArrayList<MotorInstruction>();
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		NetCom netCom;
 		Plotter.displayText("Initializing...");
 
@@ -45,19 +45,12 @@ public class Plotter {
 
 		// Wait for a client.
 		Plotter.displayText("Waiting 4 client...");
-		try {
-			netCom = Plotter.waitForClient(LISTENING_PORT);
 
-			// Fire.
-			Plotter.displayText("Initializing...");
-			Plotter.handleClient(netCom);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		netCom = Plotter.waitForClient(LISTENING_PORT);
+
+		// Fire.
+		Plotter.displayText("Connected.");
+		Plotter.handleClient(netCom);
 
 		//
 		// // DEBUG TEST.
@@ -126,6 +119,10 @@ public class Plotter {
 				break;
 			}
 		}
+
+		// TODO : Find a way to handle the case where the client lost
+		// connection. For the moment, the EV3 brick just hangs there, doin'
+		// noting...
 	}
 
 	protected static void displayText(String text) {
