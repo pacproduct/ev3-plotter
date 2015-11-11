@@ -12,28 +12,28 @@ public class ArmSystem {
 	// Constants.
 	// Boolean set to TRUE if motors should rotate in the normal direction, or
 	// FALSE if they should behave conversely.
-	public static final boolean MOTOR_X_DIRECTION = false;
-	public static final boolean MOTOR_Y_DIRECTION = true;
+	public static final boolean MOTOR_X_DIRECTION = true;
+	public static final boolean MOTOR_Y_DIRECTION = false;
 	public static final boolean MOTOR_Z_DIRECTION = true;
 	// Motor speed when calibrating.
 	public static final int CALIBRATION_SPEED = 400;
 	// Motor speed when operating.
-	public static final int DEFAULT_OPERATION_SPEED = 200;
+	public static final int DEFAULT_OPERATION_SPEED = 500;
 	// Angle to rotate motors just after going backward until sensor got
 	// pressed, to move them to position zero.
 	public static final int ANGLE_X_TO_POS_ZERO = 50;
 	public static final int ANGLE_Y_TO_POS_ZERO = 50;
 	public static final int ANGLE_Z_TO_POS_ZERO = 50;
 	// Minimums/Maximums.
-	public static final int MIN_POS_X = -2000;
-	public static final int MIN_POS_Y = -2000;
-	public static final int MIN_POS_Z = -2000;
-	public static final int MAX_POS_X = 2000;
-	public static final int MAX_POS_Y = 2000;
-	public static final int MAX_POS_Z = 2000;
+	public static final int MIN_POS_X = 0;
+	public static final int MIN_POS_Y = 0;
+	public static final int MIN_POS_Z = 0;
+	public static final int MAX_POS_X = 3800;
+	public static final int MAX_POS_Y = 3080;
+	public static final int MAX_POS_Z = 100;
 	// Mechanical plays.
-	public static final int MECH_PLAY_X = 2;
-	public static final int MECH_PLAY_Y = 2;
+	public static final int MECH_PLAY_X = 0;
+	public static final int MECH_PLAY_Y = 0;
 	public static final int MECH_PLAY_Z = 0;
 
 	// Robotic parts and properties.
@@ -52,11 +52,11 @@ public class ArmSystem {
 	 */
 	public ArmSystem() {
 		this.armMotorX = new ArmMotor(new Port[] { MotorPort.A, MotorPort.B },
-				MOTOR_X_DIRECTION, true, MECH_PLAY_X);
+				MOTOR_X_DIRECTION, false, MECH_PLAY_X);
 		this.armMotorY = new ArmMotor(new Port[] { MotorPort.C },
-				MOTOR_Y_DIRECTION, false, MECH_PLAY_Y);
+				MOTOR_Y_DIRECTION, true, MECH_PLAY_Y);
 		this.armMotorZ = new ArmMotor(new Port[] { MotorPort.D },
-				MOTOR_Y_DIRECTION, false, MECH_PLAY_Z);
+				MOTOR_Z_DIRECTION, false, MECH_PLAY_Z);
 
 		this.armMotorX.setSpeed(this.baseSpeed);
 		this.armMotorY.setSpeed(this.baseSpeed);

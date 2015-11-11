@@ -33,10 +33,8 @@ public class Geometry {
 
 		// Initial values.
 		double angle = startAngle;
-		int startX = Math.round((float) (circleCenter.x + radius
-				* Math.cos(angle)));
-		int startY = Math.round((float) (circleCenter.y + radius
-				* Math.sin(angle)));
+		float startX = (float) (circleCenter.x + radius * Math.cos(angle));
+		float startY = (float) (circleCenter.y + radius * Math.sin(angle));
 
 		// Start position.
 		positions.add(new FloatVector3D(startX, startY, circleCenter.z));
@@ -46,10 +44,8 @@ public class Geometry {
 		// already been added to the list.
 		for (int i = 1; i <= numPoints; i++) {
 			angle = startAngle + (2 * Math.PI * i) / numPoints;
-			int currentX = Math.round((float) (circleCenter.x + radius
-					* Math.cos(angle)));
-			int currentY = Math.round((float) (circleCenter.y + radius
-					* Math.sin(angle)));
+			float currentX = (float) (circleCenter.x + radius * Math.cos(angle));
+			float currentY = (float) (circleCenter.y + radius * Math.sin(angle));
 
 			positions
 					.add(new FloatVector3D(currentX, currentY, circleCenter.z));

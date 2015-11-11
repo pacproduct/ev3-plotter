@@ -17,13 +17,13 @@ public class Plotter {
 
 	// Constants.
 	// Scale converter reference, in millimeters.
-	public static final float SCALE_REF_MILLIMETERS = 100.0f;
+	public static final float SCALE_REF_MILLIMETERS = 250.0f;
 	// Scale converter reference, in degrees.
-	public static final int SCALE_REF_DEGREES = 720;
+	public static final int SCALE_REF_DEGREES = 3500;
 	// Port accepting clients.
 	public static final int LISTENING_PORT = 7777;
 	// Timeout
-	public static final int WAITING_FOR_CLIENT_PACKET_TIMEOUT = 3600 * 1000;
+	public static final int WAITING_FOR_CLIENT_PACKET_TIMEOUT = 60 * 1000;
 
 	protected static ArmSystem as = null;
 	protected static InstructionsGenerator ig = null;

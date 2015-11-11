@@ -168,12 +168,14 @@ public class NetCom {
 
 		case NetComPacket.TYPE_STACK_MILLIMETER_POSITIONS:
 			for (FloatVector3D position : packet.floatVector3DList) {
-				if (!stringToSend.equals("")) {
+				if (stringToSend.length() != 0) {
 					stringToSend.append(";");
 				}
 				stringToSend.append(position.x + "," + position.y + ","
 						+ position.z);
 			}
+
+			stringToSend.insert(0, packetType + ":");
 			break;
 
 		case NetComPacket.TYPE_RUN_PENDING_ACTIONS:
